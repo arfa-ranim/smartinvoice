@@ -1,40 +1,156 @@
-
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
+/* =========================
+   MATERIAL CORE
+========================= */
+@include mat.core();
+
+/* =========================
+   MATERIAL 3 THEME
+========================= */
 html {
-  height: 100%;
   @include mat.theme((
     color: (
-      primary: mat.$deep-orange-palette,
-      tertiary: mat.$amber-palette,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
     ),
     typography: Roboto,
     density: 0,
   ));
 }
-
-
+* {
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+/* =========================
+   BASE
+========================= */
+html, body {
+  height: 100%;
+  margin: 0;
+}
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-light);
   font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
-  margin: 0;
-  height: 100%;
+  color-scheme: light;
 }
-/* You can add global styles to this file, and also import other style files */
+
+/* =========================
+   DESIGN TOKENS
+========================= */
+:root {
+  --primary: #0f4b80;
+  --accent-green: #00b894;
+  --accent-gold: #ffc107;
+
+  /* LIGHT */
+  --bg-light: #f6f7f8;
+  --card-light: #ffffff;
+  --text-light: #111827;
+  --border-light: #e5e7eb;
+
+  /* DARK */
+  --bg-dark: #0a1219;
+  --surface-dark: #111d29;
+  --text-dark: #e5e7eb;
+  --border-dark: #1f2937;
+}
+
+/* =========================
+   DARK MODE (TOGGLE CLASS)
+========================= */
+/* =========================
+   GLOBAL DARK MODE
+========================= */
+body.dark-mode {
+  color-scheme: dark;
+
+  --bg-light: #0a1219;
+  --card-light: #111d29;
+  --text-light: #e5e7eb;
+  --border-light: #1f2937;
+
+  /* Material sync */
+  --mat-sys-surface: #0a1219;
+  --mat-sys-on-surface: #e5e7eb;
+}
+
+/* NAVBAR */
+body.dark-mode .nav {
+  background: rgba(11, 17, 23, 0.8);
+  border-bottom-color: var(--border-dark);
+}
+
+body.dark-mode .nav-links a {
+  color: #94a3b8;
+
+  &:hover { color: var(--accent-gold); }
+}
+
+body.dark-mode .btn-link {
+  color: #94a3b8;
+
+  &:hover { color: white; }
+}
+
+body.dark-mode .logo-text {
+  color: white;
+}
+
+/* FEATURES */
+body.dark-mode .features {
+  background: rgba(11, 17, 23, 0.5);
+}
+
+body.dark-mode .feature-card {
+  background: #1e293b;
+  border-color: #334155;
+
+  h3 { color: white; }
+  p  { color: #94a3b8; }
+
+  &:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+    .icon-wrapper { color: var(--accent-gold) !important; }
+  }
+}
+
+body.dark-mode .icon-wrapper.primary      { background: rgba(15, 75, 128, 0.2); }
+body.dark-mode .icon-wrapper.accent-green { background: rgba(0, 184, 148, 0.2); }
+body.dark-mode .icon-wrapper.accent-gold  { background: rgba(255, 193, 7, 0.2); }
+body.dark-mode .icon-wrapper.purple       { background: rgba(76, 29, 149, 0.3); color: #a78bfa; }
+
+/* FOOTER */
+body.dark-mode .footer {
+  background: var(--bg-dark);
+  border-top-color: var(--border-dark);
+}
+
+body.dark-mode .footer-brand p {
+  color: #475569;
+}
+
+body.dark-mode .footer-logo-text {
+  color: white;
+}
+
+body.dark-mode .footer-col h5 { color: white; }
+body.dark-mode .footer-col a {
+  color: #475569;
+
+  &:hover { color: var(--accent-gold); }
+}
+ 
+body.dark-mode .footer-bottom {
+  border-top-color: var(--border-dark);
+}
+
+body.dark-mode .footer-copy { color: #334155; }
+body.dark-mode .footer-social mat-icon {
+  color: #475569;
+
+  &:hover { color: var(--accent-gold); }
+}

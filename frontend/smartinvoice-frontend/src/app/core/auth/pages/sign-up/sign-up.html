@@ -1,0 +1,116 @@
+<div class="signup-wrapper">
+  <!-- LEFT: Benefits Section - Will appear above on mobile -->
+  <div class="benefits-section">
+    <div class="intro">
+      <h1>Simplify your <span class="highlight">Invoicing</span> today.</h1>
+      <p>Join thousands of businesses worldwide using SmartInvoice to manage payments, track expenses, and grow faster.</p>
+    </div>
+
+    <div class="benefits-grid">
+      @for (benefit of benefits; track benefit.title) {
+        <div class="benefit-card">
+          <mat-icon class="icon">{{ benefit.icon }}</mat-icon>
+          <h3>{{ benefit.title }}</h3>
+          <p>{{ benefit.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- RIGHT: Form Section -->
+  <div class="form-section">
+    <mat-card class="signup-card">
+      <mat-card-content>
+        <div class="form-header">
+          <h2>Create your account</h2>
+          <p>Start your 14-day free trial. No credit card required.</p>
+        </div>
+
+        <!-- SOCIAL BUTTONS with Material Icons -->
+        <div class="social-buttons">
+          <button mat-stroked-button type="button" class="social-btn">
+            <mat-icon>public</mat-icon>
+            Google
+          </button>
+          <button mat-stroked-button type="button" class="social-btn">
+            <mat-icon>business</mat-icon>
+            Microsoft
+          </button>
+        </div>
+
+        <!-- DIVIDER -->
+        <div class="divider">
+          <span>Or continue with</span>
+        </div>
+
+        <!-- FORM -->
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+          <!-- FULL NAME -->
+          <mat-form-field appearance="outline">
+            <mat-label>Full Name</mat-label>
+            <mat-icon matPrefix>person_outline</mat-icon>
+            <input matInput formControlName="fullName" autocomplete="name" placeholder="John Doe" />
+            @if (form.get('fullName')?.invalid && form.get('fullName')?.touched) {
+              <mat-error>Full name is required</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- COMPANY -->
+          <mat-form-field appearance="outline">
+            <mat-label>Company Name</mat-label>
+            <mat-icon matPrefix>business_outline</mat-icon>
+            <input matInput formControlName="companyName" autocomplete="organization" placeholder="Acme Inc." />
+            @if (form.get('companyName')?.invalid && form.get('companyName')?.touched) {
+              <mat-error>Company name is required</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- EMAIL -->
+          <mat-form-field appearance="outline">
+            <mat-label>Email Address</mat-label>
+            <mat-icon matPrefix>mail_outline</mat-icon>
+            <input matInput formControlName="email" autocomplete="email" placeholder="john@example.com" />
+            @if (form.get('email')?.invalid && form.get('email')?.touched) {
+              <mat-error>Enter a valid email</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- PASSWORD -->
+          <mat-form-field appearance="outline">
+            <mat-label>Password</mat-label>
+            <mat-icon matPrefix>lock_outline</mat-icon>
+            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" autocomplete="new-password" placeholder="••••••••" />
+            <button mat-icon-button matSuffix type="button" (click)="togglePassword()">
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            @if (form.get('password')?.invalid && form.get('password')?.touched) {
+              <mat-error>Password must be at least 8 characters</mat-error>
+            }
+          </mat-form-field>
+
+          <!-- TERMS -->
+          <mat-checkbox formControlName="terms" class="terms">
+            By signing up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
+          </mat-checkbox>
+
+          <!-- SUBMIT -->
+          <button mat-raised-button class="submit-btn" [disabled]="form.invalid || loading">
+            @if (loading) {
+              <mat-spinner diameter="22"></mat-spinner>
+            } @else {
+              <span class="btn-content">
+                Get Started Now
+                <mat-icon>arrow_forward</mat-icon>
+              </span>
+            }
+          </button>
+        </form>
+
+        <!-- SIGN IN LINK -->
+        <p class="signin-link">
+          Already have an account? <a routerLink="/auth/sign-in">Sign in</a>
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

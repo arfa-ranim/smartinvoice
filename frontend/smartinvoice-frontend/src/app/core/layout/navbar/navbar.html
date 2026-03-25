@@ -1,0 +1,20 @@
+<nav class="nav">
+  <div class="nav-container">
+    <div class="logo" routerLink="/">
+      <div class="logo-icon">
+        <mat-icon>receipt_long</mat-icon>
+      </div>
+      <span class="logo-text">SmartInvoice</span>
+    </div>
+    
+    <div class="nav-auth">
+      <button class="theme-toggle" (click)="toggleTheme()">
+        <mat-icon>
+          {{ isDarkMode ? 'dark_mode' : 'light_mode' }}
+        </mat-icon>
+      </button>
+      <a routerLink="/auth/sign-in" class="btn-link">Sign In</a>
+      <a routerLink="/auth/sign-up" class="btn-primary">Sign Up</a>
+    </div>
+  </div>
+</nav>

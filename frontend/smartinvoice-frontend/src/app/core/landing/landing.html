@@ -1,0 +1,61 @@
+<!-- Hero -->
+<header class="hero">
+  <div class="hero-container">
+    <div class="hero-content">
+      <div class="badge">New: AI-Driven Insights 2.0</div>
+      <h1>Create invoices <span class="highlight">smarter</span> with AI</h1>
+      <p>Experience the future of billing with our AI-powered platform. Fast, accurate, and professional invoicing that gets you paid 3x faster.</p>
+
+      <div class="hero-cta">
+        <a routerLink="/auth/sign-up" class="btn-accent-gold">Sign Up</a>
+        <button class="btn-accent-green" (click)="scrollToFeatures()">Learn More</button>
+      </div>
+
+      <div class="trust-bar">
+        <div class="avatars">
+          <img src="https://ui-avatars.com/api/?name=A&background=0D8ABC&color=fff" alt="user">
+          <img src="https://ui-avatars.com/api/?name=B&background=34D399&color=fff" alt="user">
+          <img src="https://ui-avatars.com/api/?name=C&background=F59E0B&color=fff" alt="user">
+        </div>
+        <p>Trusted by 10,000+ businesses</p>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="mockup">
+        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71" alt="Invoice Dashboard">
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Features -->
+<section class="features">
+  <div class="section-header">
+    <span class="tag">KEY FEATURES</span>
+    <h2>The smarter way to manage cashflow </h2>
+  </div>
+
+  <div class="features-grid">
+    @for (feature of features; track feature.title) {
+      <div class="feature-card">
+        <div class="icon-wrapper" [class]="feature.color">
+          <mat-icon>{{ feature.icon }}</mat-icon>
+        </div>
+        <h3>{{ feature.title }}</h3>
+        <p>{{ feature.description }}</p>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="cta-card">
+    <h2>Ready to transform your business?</h2>
+    <p>Join thousands of professionals who are saving 10+ hours a week on administration with SmartInvoice.</p>
+    <a routerLink="/auth/sign-up" class="btn-cta">Get Started Now</a>
+  </div>
+</section>
+
+<!-- Footer -->

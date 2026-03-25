@@ -1,0 +1,92 @@
+<div class="auth-container">
+  <mat-card class="auth-card mat-elevation-z0">
+    <!-- Hero -->
+    <div class="hero-header">
+      <div class="logo-circle">
+        <mat-icon class="large-icon">person</mat-icon>
+      </div>
+    </div>
+
+    <mat-card-content>
+      <h2 class="title">Welcome Back</h2>
+      <p class="subtitle">Enter your credentials to access your dashboard</p>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <!-- EMAIL -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email Address</mat-label>
+          <mat-icon matPrefix>mail_outline</mat-icon>
+          <input matInput formControlName="email" type="email" placeholder="name@company.com" required />
+        </mat-form-field>
+
+        @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
+          <p class="error-msg">Email is required</p>
+        }
+        @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
+          <p class="error-msg">Please enter a valid email</p>
+        }
+
+        <!-- PASSWORD -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <input
+            matInput
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            placeholder="••••••••"
+            required
+          />
+          <button mat-icon-button matSuffix type="button" (click)="togglePassword()">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
+          <p class="error-msg">Password is required</p>
+        }
+
+        <!-- OPTIONS -->
+        <div class="options-row">
+          <mat-checkbox formControlName="rememberMe">Remember me for 30 days</mat-checkbox>
+          <a class="forgot-link" routerLink="/auth/forgot-password">Forgot Password?</a>
+        </div>
+
+        <!-- SUBMIT -->
+        <button mat-raised-button class="submit-btn" type="submit" [disabled]="form.invalid || loading">
+          @if (!loading) {
+            <span class="btn-content">
+              <span>Sign In</span>
+              <mat-icon>login</mat-icon>
+            </span>
+          } @else {
+            <mat-spinner diameter="24"></mat-spinner>
+          }
+        </button>
+      </form>
+
+      <!-- DIVIDER -->
+      <div class="divider"><span>Or continue with</span></div>
+
+      <!-- SOCIAL -->
+      <div class="social-row">
+        <button mat-stroked-button class="social-btn">
+          <mat-icon>public</mat-icon> Google
+        </button>
+        <button mat-stroked-button class="social-btn">
+          <mat-icon>business</mat-icon> SSO
+        </button>
+      </div>
+
+      <!-- SIGN UP -->
+      <p class="signup-link">
+        Don't have an account? <a routerLink="/auth/sign-up">Create an account</a>
+      </p>
+    </mat-card-content>
+  </mat-card>
+
+  <footer class="auth-footer">
+    © 2025 SmartInvoice Systems Inc. All rights reserved.<br>
+    Privacy Policy | Terms of Service | Help Center
+  </footer>
+</div>
