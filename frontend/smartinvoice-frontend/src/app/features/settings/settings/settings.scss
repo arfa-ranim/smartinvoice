@@ -1,0 +1,643 @@
+// ============================================
+// COMPANY SETTINGS STYLES - ENHANCED
+// ============================================
+
+.settings-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+  background: var(--bg-light);
+  transition: background 0.3s ease;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.settings-content {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+  animation: fadeIn 0.3s ease-out;
+
+  @media (max-width: 640px) {
+    padding: 1rem;
+  }
+}
+
+// ========== FORM CARDS ==========
+.form-card {
+  background: var(--card-light);
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 1.25rem;
+    color: var(--text-light);
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border-light);
+
+    &::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: var(--primary-gradient);
+      border-radius: 2px;
+    }
+  }
+}
+
+body.dark-mode .form-card {
+  background: var(--card-dark);
+  border-color: var(--border-dark);
+}
+
+// ========== SECTION SUBTITLE ==========
+.section-subtitle {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 1.5rem 0 1rem;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  &:first-of-type {
+    margin-top: 0;
+  }
+}
+
+// ========== FORM GRID & FIELDS ==========
+.form-grid {
+  display: grid;
+  gap: 1.25rem;
+
+  &.two-columns {
+    grid-template-columns: 1fr;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  &.three-columns {
+    grid-template-columns: 1fr;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  input, textarea, select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    color: var(--text-light);
+    font-size: 0.875rem;
+    font-family: inherit;
+    transition: all 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(15, 75, 128, 0.1);
+    }
+
+    &:hover:not(:focus) {
+      border-color: var(--primary-light);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+input[type="number"] {
+  -moz-appearance: textfield;     
+  appearance: textfield;           
+  
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;     
+    appearance: none;             
+    opacity: 0.5;
+  }
+}
+  .error {
+    font-size: 0.75rem;
+    color: #ef4444;
+    margin-top: 0.25rem;
+  }
+  
+  .field-hint {
+    font-size: 0.7rem;
+    color: var(--text-secondary-light);
+    margin-top: 0.25rem;
+  }
+}
+
+body.dark-mode .form-field {
+  label {
+    color: #94a3b8;
+  }
+  input, textarea, select {
+    background: #1e293b;
+    border-color: #334155;
+    color: white;
+    &:focus {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
+    }
+    &:hover:not(:focus) {
+      border-color: var(--accent-gold-dark);
+    }
+  }
+}
+
+// ========== CHECKBOX FIELD ==========
+.checkbox-field {
+  margin: 0.5rem 0;
+  
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-light);
+    padding: 0.5rem;
+    border-radius: 10px;
+    transition: background 0.2s;
+    
+    &:hover {
+      background: var(--hover-light);
+    }
+    
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--primary);
+      margin: 0;
+    }
+  }
+}
+
+body.dark-mode .checkbox-field .toggle-label {
+  &:hover {
+    background: rgba(255, 193, 7, 0.05);
+  }
+  
+  input[type="checkbox"] {
+    accent-color: var(--accent-gold);
+  }
+}
+
+// ========== REMINDER DAYS ==========
+.reminder-days {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: var(--bg-light);
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  
+  label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    margin: 0;
+  }
+  
+  input {
+    width: 80px;
+    text-align: center;
+  }
+}
+
+body.dark-mode .reminder-days {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+// ========== STRIPE KEY WRAPPER ==========
+.stripe-key-wrapper {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  
+  input {
+    flex: 1;
+  }
+  
+  .toggle-visibility-btn {
+    background: transparent;
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    transition: all 0.2s;
+    
+    &:hover {
+      background: var(--hover-light);
+      color: var(--primary);
+    }
+  }
+}
+
+// ========== LOGO UPLOAD ==========
+.logo-upload {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  .logo-preview {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    background: white;
+    padding: 4px;
+  }
+
+  .logo-placeholder {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-light);
+    border: 1px dashed var(--border-light);
+    border-radius: 12px;
+    color: #64748b;
+    font-size: 0.75rem;
+    text-align: center;
+  }
+
+  .upload-logo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: 1px solid var(--border-light);
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-light);
+
+    &:hover {
+      background: var(--hover-light);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+body.dark-mode .upload-logo-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+// ========== COLOR PICKER ==========
+.color-picker-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+
+  .color-input {
+    width: 50px;
+    height: 42px;
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .color-value {
+    font-family: monospace;
+    font-size: 0.875rem;
+    color: var(--text-light);
+    background: var(--bg-light);
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+  }
+}
+
+// ========== THEME TOGGLE ==========
+.theme-toggle-section {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-light);
+  
+  > label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #475569;
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.theme-toggle-settings {
+  display: flex;
+  gap: 0.5rem;
+  background: var(--bg-light);
+  border-radius: 12px;
+  padding: 0.25rem;
+  border: 1px solid var(--border-light);
+  width: fit-content;
+
+  .theme-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #64748b;
+    font-weight: 500;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+      transform: translateY(-1px);
+    }
+
+    &.active {
+      background: var(--primary-gradient);
+      color: white;
+      box-shadow: 0 2px 8px rgba(15, 75, 128, 0.3);
+    }
+  }
+}
+
+body.dark-mode .theme-toggle-settings .theme-option {
+  &.active {
+    background: var(--warning-gradient);
+    color: #1a1a2e;
+  }
+}
+
+// ========== ACTION BUTTONS GROUP ==========
+.action-buttons-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+  
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+    
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+    
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+  
+  .btn-primary {
+    background: var(--primary-gradient);
+    border: none;
+    color: white;
+    box-shadow: 0 2px 8px rgba(15, 75, 128, 0.3);
+    
+    &:hover {
+      box-shadow: 0 4px 12px rgba(15, 75, 128, 0.4);
+    }
+  }
+  
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border-light);
+    color: #64748b;
+    
+    &:hover {
+      background: var(--hover-light);
+      color: var(--text-light);
+      border-color: var(--primary);
+    }
+  }
+  
+  .btn-danger {
+    background: transparent;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    
+    &:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: #ef4444;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+    }
+  }
+}
+
+body.dark-mode .action-buttons-group {
+  .btn-primary {
+    background: var(--warning-gradient);
+    color: #1a1a2e;
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+  }
+  
+  .btn-secondary {
+    border-color: #334155;
+    color: #94a3b8;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      border-color: var(--accent-gold);
+    }
+  }
+}
+
+// ========== TEST EMAIL BUTTON ==========
+.test-email-btn {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    background: transparent;
+    border: 1px solid var(--border-light);
+    border-radius: 40px;
+    padding: 0.5rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #64748b;
+    font-weight: 500;
+    font-size: 0.875rem;
+
+    &:hover {
+      background: var(--hover-light);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+body.dark-mode .test-email-btn button {
+  border-color: #334155;
+  color: #94a3b8;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--accent-gold);
+  }
+}
+
+// ========== EXPORT BUTTONS ==========
+.export-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+// ========== HIDDEN FILE INPUT ==========
+.hidden-file-input {
+  display: none;
+}
+
+// ========== ANIMATIONS ==========
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ========== RESPONSIVE ==========
+@media (max-width: 768px) {
+  .settings-content {
+    padding: 1rem;
+  }
+  
+  .form-card {
+    padding: 1rem;
+  }
+  
+  .action-buttons-group {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  .theme-toggle-settings {
+    width: 100%;
+    
+    .theme-option {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+  
+  .logo-upload {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .color-picker-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+// ========== MATERIAL OVERRIDES ==========
+.mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+}

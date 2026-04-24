@@ -1,1 +1,129 @@
-<p>invoice-list works!</p>
+<div class="invoices-container">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+    <app-top-bar
+      title="{{ 'INVOICES.TITLE' | translate }}"
+      [showMenuButton]="true"
+      [showSearch]="false"
+      [showNotifications]="true"
+      [showAvatar]="true"
+      [showUserInfo]="false"
+      (onMenuClick)="toggleSidebar()"
+    ></app-top-bar>
+
+    <div class="invoices-content">
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <p class="stat-label">{{ 'INVOICES.TOTAL_REVENUE' | translate }}</p>
+          <div class="stat-value">
+            {{ totalRevenue | appCurrency }}
+            <span class="trend-up"><mat-icon>trending_up</mat-icon> 12%</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">{{ 'INVOICES.OUTSTANDING' | translate }}</p>
+          <div class="stat-value">
+            {{ totalOutstanding | appCurrency }}
+            <span class="trend-pending"><mat-icon>schedule</mat-icon> {{ pendingCount }} {{ 'INVOICES.PENDING' | translate }}</span>
+          </div>
+        </div>
+        <div class="stat-card create-card">
+          <h3>{{ 'INVOICES.CREATE_NEW' | translate }}</h3>
+          <p>{{ 'INVOICES.CREATE_DESC' | translate }}</p>
+          <button class="new-invoice-btn" (click)="createInvoice()">
+            <mat-icon>add</mat-icon> {{ 'INVOICES.NEW_INVOICE' | translate }}
+          </button>
+          <div class="bg-pattern"><mat-icon>payments</mat-icon></div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <app-invoice-filters
+        [searchQuery]="searchQuery"
+        [selectedFilter]="selectedFilter"
+        [invoiceType]="selectedInvoiceType"
+        [dateFrom]="dateFrom"
+        [dateTo]="dateTo"
+        [minAmount]="minAmount"
+        [maxAmount]="maxAmount"
+        [selectedClientId]="selectedClientId"
+        [clients]="clients"
+        [filterCounts]="filterCounts"
+        (searchChange)="onSearch($event)"
+        (filterChange)="onFilterChange($event)"
+        (invoiceTypeChange)="onInvoiceTypeChange($event)"
+        (dateFromChange)="onDateFromChange($event)"
+        (dateToChange)="onDateToChange($event)"
+        (minAmountChange)="onMinAmountChange($event)"
+        (maxAmountChange)="onMaxAmountChange($event)"
+        (clientChange)="onClientChange($event)"
+        (clearFilters)="clearFilters()"
+      ></app-invoice-filters>
+
+      <!-- Invoices Table -->
+      <app-invoice-table
+        [invoices]="paginatedInvoices"
+        (sort)="onSort($event)"
+        (rowClick)="onRowClick($event)"
+        (statusChange)="onStatusChange($event)"
+        (edit)="onEdit($event)"
+        (markPaid)="onMarkPaid($event)"
+        (reminder)="onSendReminder($event)"
+        (duplicate)="onDuplicate($event)"
+        (viewDetails)="onRowClick($event)"
+        (createInvoice)="createInvoice()"
+        (exportData)="exportToExcel()"
+      ></app-invoice-table>
+
+      <!-- Pagination -->
+@if (totalInvoices > 0) {
+  <div class="pagination">
+    <div class="pagination-info">
+
+      <select 
+        class="page-size-select" 
+        (change)="onPageSizeChange($event)"
+        aria-label="{{ 'COMMON.ITEMS_PER_PAGE' | translate }}"
+      >
+        @for (size of pageSizeOptions; track size) {
+          <option [value]="size" [selected]="size === itemsPerPage">
+            {{ size }} {{ 'COMMON.PER_PAGE' | translate }}
+          </option>
+        }
+      </select>
+    </div>
+    <div class="pagination-controls">
+      <button class="page-btn" [disabled]="currentPage === 1" (click)="previousPage()" aria-label="{{ 'COMMON.PREVIOUS' | translate }}">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      @for (page of pages; track page) {
+        <button 
+          class="page-number" 
+          [class.active]="page === currentPage" 
+          (click)="goToPage(page)"
+          [attr.aria-label]="'Go to page ' + page"
+        >
+          {{ page }}
+        </button>
+      }
+      <button class="page-btn" [disabled]="currentPage === totalPages" (click)="nextPage()" aria-label="{{ 'COMMON.NEXT' | translate }}">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+}
+
+      <!-- Drafts Panel (moved after invoices table) -->
+      <app-drafts-panel
+        [drafts]="drafts"
+        (resume)="onResumeDraft($event)"
+        (delete)="onDeleteDraft($event)"
+        (clearAll)="onClearAllDrafts()"
+      ></app-drafts-panel>
+    </div>
+  </main>
+
+  <app-bottom-nav></app-bottom-nav>
+</div>

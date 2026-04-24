@@ -1,0 +1,272 @@
+<div class="create-product-container">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+    <app-top-bar
+      title="{{ 'PRODUCTS.CREATE_TITLE' | translate }}"
+      [showMenuButton]="true"
+      [showBackButton]="true"
+      [showNotifications]="true"
+      [showAvatar]="true"
+      [showUserInfo]="false"
+      (onMenuClick)="toggleSidebar()"
+      (onBackClick)="goBack()"
+    ></app-top-bar>
+
+    <div class="create-content">
+      <div class="page-header">
+        <h1>{{ 'PRODUCTS.CREATE_TITLE' | translate }}</h1>
+      </div>
+
+      <div class="two-column-layout">
+        <div class="form-column">
+          <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+
+            <!-- TYPE -->
+            <section class="form-card">
+              <h2 class="section-label">{{ 'PRODUCTS.ENTRY_CLASSIFICATION' | translate }}</h2>
+
+              <div class="type-selector">
+
+                <label class="type-option" [class.active]="productType === 'physical'">
+                  <input
+                    type="radio"
+                    formControlName="type"
+                    value="physical"
+                    aria-label="Physical product"
+                  >
+                  <span class="type-icon" aria-hidden="true">
+                    <mat-icon>inventory_2</mat-icon>
+                  </span>
+                  <div class="type-info">
+                    <span class="type-title">{{ 'PRODUCTS.PHYSICAL_PRODUCT' | translate }}</span>
+                    <span class="type-desc">{{ 'PRODUCTS.PHYSICAL_DESC' | translate }}</span>
+                  </div>
+                </label>
+
+                <label class="type-option" [class.active]="productType === 'service'">
+                  <input
+                    type="radio"
+                    formControlName="type"
+                    value="service"
+                    aria-label="Service product"
+                  >
+                  <span class="type-icon" aria-hidden="true">
+                    <mat-icon>medical_services</mat-icon>
+                  </span>
+                  <div class="type-info">
+                    <span class="type-title">{{ 'PRODUCTS.SERVICE' | translate }}</span>
+                    <span class="type-desc">{{ 'PRODUCTS.SERVICE_DESC' | translate }}</span>
+                  </div>
+                </label>
+
+              </div>
+            </section>
+
+            <!-- FORM -->
+            <section class="form-card">
+              <h2 class="section-label">{{ 'PRODUCTS.GENERAL_INFO' | translate }}</h2>
+
+              <div class="form-grid">
+
+                <div class="form-field">
+                  <label for="productName">{{ 'PRODUCTS.PRODUCT_NAME' | translate }}</label>
+                  <input id="productName" type="text"
+                    formControlName="name"
+                    placeholder="Product name"
+                    aria-label="Product name"
+                  >
+                </div>
+
+                <div class="form-field" [class.hidden]="productType === 'service'">
+                  <label for="productSku">{{ 'PRODUCTS.SKU_NUMBER' | translate }}</label>
+                  <input id="productSku" type="text"
+                    formControlName="sku"
+                    placeholder="SKU"
+                    aria-label="Product SKU"
+                  >
+                </div>
+
+              </div>
+            </section>
+
+            <!-- PRICING -->
+            <section class="form-card">
+              <h2 class="section-label">{{ 'PRODUCTS.FINANCIAL_STRUCTURE' | translate }}</h2>
+
+              <div class="form-grid three-columns">
+
+                <div class="form-field">
+                  <label for="productPrice">{{ 'PRODUCTS.UNIT_PRICE' | translate }}</label>
+                  <input id="productPrice" type="number"
+                    formControlName="price"
+                    aria-label="Product price"
+                  >
+                </div>
+
+                <div class="form-field">
+                  <label for="productTaxRate">{{ 'PRODUCTS.TAX_RATE' | translate }}</label>
+                  <select id="productTaxRate"
+                    formControlName="taxRate"
+                    aria-label="Tax rate"
+                  >
+                    <option value="0">0%</option>
+                    <option value="5">5%</option>
+                    <option value="15">15%</option>
+                    <option value="20">20%</option>
+                  </select>
+                </div>
+
+                <div class="form-field">
+                  <label for="productUnit">{{ 'PRODUCTS.MEASUREMENT_UNIT' | translate }}</label>
+                  <select id="productUnit"
+                    formControlName="unit"
+                    aria-label="Unit"
+                  >
+                    @for (unit of unitOptions; track unit) {
+                      <option [value]="unit">{{ unit }}</option>
+                    }
+                  </select>
+                </div>
+
+              </div>
+            </section>
+
+            <!-- STOCK -->
+            @if (productType === 'physical') {
+              <section class="form-card">
+                <h2 class="section-label">{{ 'PRODUCTS.WAREHOUSE_LEDGER' | translate }}</h2>
+
+                <div class="form-grid two-columns">
+
+                  <div class="form-field">
+                    <label for="initialStock">Initial stock</label>
+
+                    <div class="stock-control">
+                      <button
+                        type="button"
+                        (click)="decrementStock()"
+                        aria-label="Decrease stock"
+                      >
+                        <mat-icon aria-hidden="true">remove</mat-icon>
+                      </button>
+
+                      <input id="initialStock"
+                        type="number"
+                        formControlName="initialStock"
+                        readonly
+                        aria-label="Initial stock"
+                      >
+
+                      <button
+                        type="button"
+                        (click)="incrementStock()"
+                        aria-label="Increase stock"
+                      >
+                        <mat-icon aria-hidden="true">add</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="form-field">
+                    <label for="lowStockThreshold">Low stock threshold</label>
+                    <input id="lowStockThreshold"
+                      type="number"
+                      formControlName="lowStockThreshold"
+                      aria-label="Low stock threshold"
+                    >
+                  </div>
+
+                </div>
+              </section>
+            }
+
+            <!-- ACTIONS -->
+            <div class="form-actions">
+
+              <button
+                type="button"
+                class="btn-secondary"
+                (click)="cancel()"
+                aria-label="Cancel"
+              >
+                {{ 'COMMON.CANCEL' | translate }}
+              </button>
+
+              <button
+                type="button"
+                class="btn-secondary"
+                (click)="onSubmit(true)"
+                aria-label="Save and add another product"
+              >
+                {{ 'PRODUCTS.SAVE_ADD_ANOTHER' | translate }}
+              </button>
+
+              <button
+                type="submit"
+                class="btn-primary"
+                aria-label="Save product"
+              >
+                {{ 'PRODUCTS.SAVE_PRODUCT' | translate }}
+              </button>
+
+            </div>
+
+          </form>
+        </div>
+
+        <!-- PREVIEW -->
+        <div class="preview-column">
+
+          <div class="preview-card">
+            <div class="preview-image">
+
+              <img
+                src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop"
+                alt="Product preview image"
+              >
+
+              <div class="preview-badge" [class]="getBadgeClass()">
+                {{ getBadgeLabel() }}
+              </div>
+
+            </div>
+          </div>
+
+          <!-- TIP -->
+          <div class="tip-card">
+            <div class="tip-icon">
+              <mat-icon aria-hidden="true">{{ getTipIcon() }}</mat-icon>
+            </div>
+            <div class="tip-content">
+              <h4>{{ 'PRODUCTS.LEDGER_STRATEGY' | translate }}</h4>
+              <p>{{ getTipText() }}</p>
+            </div>
+          </div>
+
+          <!-- META -->
+          <div class="meta-card">
+            <div class="meta-item">
+              <mat-icon aria-hidden="true">lock</mat-icon>
+              <span>{{ 'PRODUCTS.ENCRYPTED_AUDIT' | translate }}</span>
+            </div>
+            <span class="version">v4.2.1</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FAB -->
+  <button
+    class="fab-add-catalog"
+    type="button"
+    (click)="onSubmit(false)"
+    aria-label="Add product to catalog"
+  >
+    <mat-icon aria-hidden="true">add_shopping_cart</mat-icon>
+  </button>
+
+  <app-bottom-nav></app-bottom-nav>
+</div>

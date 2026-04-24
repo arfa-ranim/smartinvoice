@@ -1,0 +1,640 @@
+// ============================================
+// DESIGN TOKENS (sync with theme.service)
+// ============================================
+:root {
+  --primary: #0f4b80;
+  --accent-gold: #ffc107;
+  --accent-green: #00b894;
+  --bg-light: #f7f9fc;
+  --bg-dark: #0a1118;
+  --card-light: #ffffff;
+  --card-dark: #0f172a;
+  --text-light: #1e293b;
+  --text-dark: #e5e7eb;
+  --border-light: #e5e7eb;
+  --border-dark: #1e293b;
+}
+
+* {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+// Conteneur principal avec grille (sidebar + main)
+.payments-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+  background: var(--bg-light);
+  transition: background 0.3s ease;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+body.dark-mode .payments-container {
+  background: var(--bg-dark);
+}
+
+// Main Content
+.main-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+
+
+.logo-mobile {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+
+  @media (max-width: 1024px) {
+    display: flex;
+  }
+
+  .logo-icon {
+    background: var(--primary);
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .logo-text {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0;
+  }
+}
+
+body.dark-mode .logo-mobile .logo-text {
+  color: white;
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto;
+}
+
+
+// Contenu principal (centré, largeur max)
+.payment-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+
+  @media (min-width: 640px) {
+    padding: 2rem;
+  }
+}
+
+// Carte de paiement (inchangée)
+.payment-card {
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+
+
+// ========== INVOICE STATUS CARD ==========
+.invoice-status-card {
+  background: var(--card-light);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  body.dark-mode & {
+    background: var(--card-dark);
+    border-color: var(--border-dark);
+  }
+
+  .icon-wrapper {
+    background: rgba(15, 75, 128, 0.1);
+    padding: 1.5rem;
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid var(--border-light);
+
+    body.dark-mode & {
+      border-bottom-color: var(--border-dark);
+    }
+
+    .icon-circle {
+      background: var(--card-light);
+      padding: 1rem;
+      border-radius: 9999px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+      body.dark-mode & {
+        background: #1e293b;
+      }
+
+      mat-icon {
+        font-size: 2rem;
+        width: 2rem;
+        height: 2rem;
+        color: var(--primary);
+      }
+    }
+  }
+
+  .invoice-details {
+    padding: 1rem 1.25rem;
+
+    .details-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+
+      .label {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--primary);
+      }
+
+      .status-badge {
+        font-size: 0.625rem;
+        font-weight: 700;
+        padding: 0.25rem 0.5rem;
+        border-radius: 9999px;
+        text-transform: uppercase;
+
+        &.pending {
+          background: rgba(255, 193, 7, 0.2);
+          color: var(--accent-gold);
+        }
+      }
+    }
+
+    .invoice-number {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem 0;
+      color: var(--text-light);
+
+      body.dark-mode & {
+        color: white;
+      }
+    }
+
+    .issue-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .issue-date {
+        font-size: 0.875rem;
+        color: #64748b;
+      }
+
+      .pdf-btn {
+        background: none;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--primary);
+        cursor: pointer;
+        transition: opacity 0.2s;
+
+        body.dark-mode & {
+          color: var(--accent-gold);
+        }
+
+        &:hover {
+          text-decoration: underline;
+        }
+
+        mat-icon {
+          font-size: 1rem;
+          width: 1rem;
+          height: 1rem;
+        }
+      }
+    }
+  }
+}
+
+// ========== AMOUNT CARD ==========
+.amount-card {
+  background: var(--primary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(15, 75, 128, 0.3);
+
+  body.dark-mode & {
+    background: #0f4b80;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .amount-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .amount-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+
+    .currency {
+      font-size: 1.5rem;
+    }
+
+    .currency-code {
+      font-size: 0.875rem;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.6);
+      margin-left: 0.25rem;
+    }
+  }
+}
+
+// ========== BILLING SECTION ==========
+.billing-section {
+  h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem 0;
+    color: var(--text-light);
+    padding-left: 0.25rem;
+
+    body.dark-mode & {
+      color: white;
+    }
+  }
+
+  .billing-card {
+    background: var(--card-light);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    body.dark-mode & {
+      background: var(--card-dark);
+      border-color: var(--border-dark);
+    }
+
+    .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+
+      mat-icon {
+        color: #64748b;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        margin-top: 2px;
+      }
+
+      div {
+        flex: 1;
+      }
+
+      .info-label {
+        font-size: 0.6875rem;
+        font-weight: 500;
+        color: #64748b;
+        margin: 0 0 0.125rem 0;
+      }
+
+      .info-value {
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin: 0;
+        color: var(--text-light);
+
+        body.dark-mode & {
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+// ========== ACTION BUTTONS ==========
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+
+  button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:active {
+      transform: scale(0.98);
+    }
+
+    mat-icon {
+      font-size: 1.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+
+  .stripe-btn {
+    background: var(--accent-green);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
+
+    &:hover {
+      filter: brightness(1.05);
+    }
+  }
+
+  .qr-btn {
+    background: var(--accent-gold);
+    color: #111827;
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+
+    &:hover {
+      filter: brightness(1.05);
+    }
+  }
+
+  .secure-notice {
+    font-size: 0.6875rem;
+    text-align: center;
+    color: #64748b;
+    margin: 0.5rem 0 0 0;
+    line-height: 1.4;
+    padding: 0 0.5rem;
+  }
+}
+
+// ========== LOADING & ERROR STATES ==========
+.loading-state, .error-state {
+  text-align: center;
+  padding: 3rem;
+  background: var(--card-light);
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  max-width: 480px;
+  margin: 0 auto;
+
+  .error-state {
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: #ef4444;
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+// ========== SUMMARY SECTION ==========
+.summary-section {
+  h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem 0;
+    color: var(--text-light);
+    padding-left: 0.25rem;
+  }
+}
+
+.summary-card {
+  background: var(--card-light);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--text-light);
+
+    .item-info {
+      display: flex;
+      flex-direction: column;
+      .item-name { font-weight: 500; }
+      .item-qty { font-size: 0.75rem; color: #64748b; }
+    }
+    .item-total { font-weight: 600; }
+
+    &.subtotal, &.vat {
+      color: #64748b;
+    }
+    &.grand-total {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-top: 0.25rem;
+      .grand-amount {
+        color: var(--primary);
+        font-size: 1.125rem;
+      }
+    }
+  }
+  .divider {
+    height: 1px;
+    background: var(--border-light);
+    margin: 0.25rem 0;
+  }
+}
+
+body.dark-mode .summary-card {
+  background: var(--card-dark);
+  border-color: var(--border-dark);
+  .summary-row .grand-amount {
+    color: var(--accent-gold);
+  }
+}
+
+// ========== PAYMENT FORM ==========
+.payment-form-section {
+  h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem 0;
+    color: var(--text-light);
+    padding-left: 0.25rem;
+  }
+}
+
+.payment-card-form {
+  background: var(--card-light);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 1rem;
+
+  .form-group {
+    margin-bottom: 1rem;
+    label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: #64748b;
+    }
+    .form-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      background: var(--bg-light);
+      font-size: 0.875rem;
+      transition: all 0.2s;
+      &:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(15, 75, 128, 0.1);
+      }
+    }
+  }
+  .form-row {
+    display: flex;
+    gap: 1rem;
+    .form-group { flex: 1; }
+  }
+  .test-card-note {
+    font-size: 0.7rem;
+    color: #64748b;
+    margin: 0.5rem 0 0;
+    text-align: center;
+  }
+}
+
+body.dark-mode .payment-card-form {
+  background: var(--card-dark);
+  border-color: var(--border-dark);
+  .form-input {
+    background: var(--bg-dark);
+    border-color: var(--border-dark);
+    color: white;
+    &:focus {
+      border-color: var(--accent-gold);
+    }
+  }
+}
+
+// ========== QR CODE MODAL ==========
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: var(--card-light);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.3);
+  animation: modalFadeIn 0.2s ease;
+
+  h3 {
+    margin: 0 0 1rem;
+    color: var(--text-light);
+  }
+  img {
+    width: 250px;
+    height: 250px;
+    margin: 1rem auto;
+    display: block;
+  }
+  p {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 1.5rem;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    button {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      &.download-btn {
+        background: var(--primary);
+        color: white;
+      }
+      &.close-btn {
+        background: transparent;
+        border: 1px solid var(--border-light);
+        color: #64748b;
+      }
+    }
+  }
+}
+
+body.dark-mode .modal-content {
+  background: var(--card-dark);
+  border-color: var(--border-dark);
+  h3 { color: white; }
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

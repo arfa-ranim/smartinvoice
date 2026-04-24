@@ -1,50 +1,49 @@
-import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { Observable, of, delay } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly TOKEN_KEY = 'fake_token';
+  private isAuthenticatedSignal = signal<boolean>(false);
 
-  /**
-   * LOGIN METHOD (Mock / Fake implementation)
-   * -----------------------------------------
-   * This function simulates a login request.
-   *
-   * @param data - contains user credentials (email, password, etc.)
-   *
-   * What it does:
-   * - Instead of calling a real backend API,
-   *   it immediately returns the same data using RxJS `of()`
-   *
-   * Why `of()`?
-   * - `of()` creates an Observable that emits the value instantly
-   * - Useful for testing frontend without a backend
-   *
-   * ⚠️ IMPORTANT:
-   * This is NOT real authentication.
-   * It does not validate credentials or connect to a server.
-   */
-  login(data: any) {
-    return of(data);
+  constructor(private router: Router) {
+    this.isAuthenticatedSignal.set(this.hasValidToken());
   }
 
-  /**
-   * REGISTER METHOD (Mock / Fake implementation)
-   * --------------------------------------------
-   * This function simulates a user registration request.
-   *
-   * @param data - contains user registration info (name, email, password, etc.)
-   *
-   * What it does:
-   * - Returns the same data instantly using `of()`
-   * - No real API call is made
-   *
-   * ⚠️ IMPORTANT:
-   * This is only for frontend testing purposes.
-   * A real app would send this data to a backend server.
-   */
-  register(data: any) {
-    return of(data);
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  hasValidToken(): boolean {
+    const token = this.getToken();
+    return token === 'true';
+  }
+
+  isAuthenticated(): boolean {
+    return this.isAuthenticatedSignal();
+  }
+
+  login(email: string, password: string): Observable<boolean> {
+    // Simulate login
+    if (email && password) {
+      localStorage.setItem(this.TOKEN_KEY, 'true');
+      this.isAuthenticatedSignal.set(true);
+      return of(true).pipe(delay(500));
+    }
+    return of(false).pipe(delay(500));
+  }
+
+  register(email: string, password: string, name: string): Observable<{ success: boolean; message?: string }> {
+    // Simulate registration
+    console.log('Registering user', { email, name });
+    // In real app, call API
+    return of({ success: true, message: 'Registration successful' }).pipe(delay(500));
+  }
+
+  logout(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+    this.isAuthenticatedSignal.set(false);
+    this.router.navigate(['/auth/sign-in']);
   }
 }

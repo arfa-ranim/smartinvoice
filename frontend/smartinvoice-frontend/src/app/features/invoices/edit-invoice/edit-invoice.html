@@ -1,0 +1,217 @@
+<div class="edit-invoice-container">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+    <app-top-bar
+      title="{{ 'INVOICES.EDIT_TITLE' | translate }}"
+      [showMenuButton]="true"
+      [showBackButton]="true"
+      [showNotifications]="true"
+      [showAvatar]="true"
+      [showUserInfo]="false"
+      (onMenuClick)="toggleSidebar()"
+      (onBackClick)="cancel()"
+    ></app-top-bar>
+
+    <div class="edit-content">
+      <div class="page-header">
+        <div>
+          <h1>{{ 'INVOICES.EDIT_INVOICE' | translate }}</h1>
+
+          @if (originalInvoice) {
+            <p class="subtitle">
+              {{ 'INVOICES.UPDATING_NUMBER' | translate }} {{ originalInvoice.id }}
+            </p>
+          }
+        </div>
+      </div>
+
+      @if (originalInvoice) {
+      <form [formGroup]="invoiceForm" class="form-content">
+
+        <!-- CLIENT -->
+        <div class="form-card">
+          <div class="card-header">
+            <mat-icon>person_add</mat-icon>
+            <h3>{{ 'INVOICES.CLIENT_INFORMATION' | translate }}</h3>
+          </div>
+
+          <div class="card-body two-columns">
+
+            <div class="form-field">
+              <label for="clientSelect">
+                {{ 'INVOICES.SELECT_CLIENT' | translate }} *
+              </label>
+
+              <input
+                id="clientSelect"
+                type="text"
+                formControlName="clientId"
+                class="form-input"
+                [matAutocomplete]="clientAuto"
+                [placeholder]="'INVOICES.SEARCH_CLIENT' | translate"
+                aria-label="Select client"
+              />
+
+              <mat-autocomplete
+                #clientAuto="matAutocomplete"
+                [displayWith]="displayClient"
+                (optionSelected)="onClientSelected($event)"
+              >
+                @for (client of filteredClients | async; track client.id) {
+                  <mat-option [value]="client">
+                    {{ client.name }} ({{ client.company }})
+                  </mat-option>
+                }
+              </mat-autocomplete>
+
+              @if (invoiceForm.get('clientId')?.invalid && invoiceForm.get('clientId')?.touched) {
+                <div class="error-message">
+                  {{ 'INVOICES.CLIENT_REQUIRED' | translate }}
+                </div>
+              }
+            </div>
+
+            <div class="form-field">
+              <label for="invoiceDate">
+                {{ 'INVOICES.INVOICE_DATE' | translate }} *
+              </label>
+
+              <input
+                id="invoiceDate"
+                type="date"
+                formControlName="invoiceDate"
+                class="form-input"
+                aria-label="Invoice date"
+              />
+            </div>
+
+          </div>
+        </div>
+
+        <!-- LINE ITEMS -->
+        <div class="form-card">
+          <div class="card-header">
+            <mat-icon>list_alt</mat-icon>
+            <h3>{{ 'INVOICES.PRODUCTS_SERVICES' | translate }}</h3>
+          </div>
+
+          <div class="table-responsive">
+            <table class="line-items-table">
+
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th>Qty</th>
+                  <th>Price</th>
+                  <th>Total</th>
+                  <th></th>
+                </tr>
+              </thead>
+
+              <tbody formArrayName="lineItems">
+
+                @for (item of lineItems.controls; track item; let i = $index) {
+                <tr [formGroupName]="i">
+
+                  <!-- DESCRIPTION -->
+                  <td class="description-cell">
+                    <label class="sr-only" for="description_{{i}}">Description</label>
+
+                    <input
+                      id="description_{{i}}"
+                      type="text"
+                      formControlName="description"
+                      class="form-input"
+                      aria-label="Description"
+                    />
+                  </td>
+
+                  <!-- QTY -->
+                  <td>
+                    <label class="sr-only" for="quantity_{{i}}">Quantity</label>
+
+                    <input
+                      id="quantity_{{i}}"
+                      type="number"
+                      formControlName="quantity"
+                      class="form-input"
+                      min="1"
+                      aria-label="Quantity"
+                    />
+                  </td>
+
+                  <!-- PRICE -->
+                  <td>
+                    <label class="sr-only" for="price_{{i}}">Price</label>
+
+                    <input
+                      id="price_{{i}}"
+                      type="number"
+                      formControlName="price"
+                      class="form-input"
+                      min="0"
+                      step="0.01"
+                      aria-label="Price"
+                    />
+                  </td>
+
+                  <!-- TOTAL -->
+<td class="total-cell">
+  {{ (item.get('quantity')?.value || 0) * (item.get('price')?.value || 0) | appCurrency }}
+</td>
+
+                  <!-- ACTION -->
+                  <td>
+                    <button
+                      type="button"
+                      class="icon-btn"
+                      (click)="removeLineItem(i)"
+                      aria-label="Remove item"
+                    >
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </td>
+
+                </tr>
+                }
+
+              </tbody>
+            </table>
+          </div>
+
+            <div class="add-line">
+              <button type="button" (click)="addLineItem()">
+                <mat-icon>add_circle</mat-icon>
+                {{ 'INVOICES.ADD_LINE' | translate }}
+              </button>
+            </div>
+        </div>
+
+        <!-- NOTES -->
+        <div class="form-card">
+          <label for="invoiceNotes">
+            {{ 'INVOICES.INVOICE_NOTES' | translate }}
+          </label>
+
+          <textarea
+            id="invoiceNotes"
+            formControlName="notes"
+            rows="4"
+            class="form-input"
+            aria-label="Invoice notes"
+          ></textarea>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="form-actions">
+          <button type="button" (click)="saveInvoice()" [disabled]="isSaving">
+            {{ 'INVOICES.UPDATE_INVOICE' | translate }}
+          </button>
+        </div>
+
+      </form>
+      }
+    </div>
+  </main>
+</div>

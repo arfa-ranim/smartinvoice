@@ -1,114 +1,149 @@
 <div class="signup-wrapper">
-  <!-- LEFT: Benefits Section - Will appear above on mobile -->
   <div class="benefits-section">
     <div class="intro">
-      <h1>Simplify your <span class="highlight">Invoicing</span> today.</h1>
-      <p>Join thousands of businesses worldwide using SmartInvoice to manage payments, track expenses, and grow faster.</p>
+      <h1>{{ 'AUTH.SIGNUP_TITLE_PART1' | translate }} <span class="highlight">{{ 'AUTH.SIGNUP_TITLE_PART2' | translate }}</span></h1>
+      <p>{{ 'AUTH.SIGNUP_SUBTITLE' | translate }}</p>
     </div>
 
     <div class="benefits-grid">
-      @for (benefit of benefits; track benefit.title) {
+      @for (benefit of benefits; track benefit.titleKey) {
         <div class="benefit-card">
-          <mat-icon class="icon">{{ benefit.icon }}</mat-icon>
-          <h3>{{ benefit.title }}</h3>
-          <p>{{ benefit.desc }}</p>
+          <mat-icon class="icon" aria-hidden="true">{{ benefit.icon }}</mat-icon>
+          <h3>{{ benefit.titleKey | translate }}</h3>
+          <p>{{ benefit.descKey | translate }}</p>
         </div>
       }
     </div>
   </div>
 
-  <!-- RIGHT: Form Section -->
   <div class="form-section">
     <mat-card class="signup-card">
       <mat-card-content>
         <div class="form-header">
-          <h2>Create your account</h2>
-          <p>Start your 14-day free trial. No credit card required.</p>
+          <h2>{{ 'AUTH.CREATE_ACCOUNT' | translate }}</h2>
+          <p>{{ 'AUTH.FREE_TRIAL' | translate }}</p>
         </div>
 
-        <!-- SOCIAL BUTTONS with Material Icons -->
         <div class="social-buttons">
-          <button mat-stroked-button type="button" class="social-btn">
-            <mat-icon>public</mat-icon>
-            Google
+          <button mat-stroked-button type="button" class="social-btn" aria-label="Sign up with Google">
+            <mat-icon aria-hidden="true">public</mat-icon> Google
           </button>
-          <button mat-stroked-button type="button" class="social-btn">
-            <mat-icon>business</mat-icon>
-            Microsoft
+          <button mat-stroked-button type="button" class="social-btn" aria-label="Sign up with Microsoft">
+            <mat-icon aria-hidden="true">business</mat-icon> Microsoft
           </button>
         </div>
 
-        <!-- DIVIDER -->
-        <div class="divider">
-          <span>Or continue with</span>
-        </div>
+        <div class="divider"><span>{{ 'AUTH.OR_CONTINUE_WITH' | translate }}</span></div>
 
-        <!-- FORM -->
         <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
-          <!-- FULL NAME -->
           <mat-form-field appearance="outline">
-            <mat-label>Full Name</mat-label>
-            <mat-icon matPrefix>person_outline</mat-icon>
-            <input matInput formControlName="fullName" autocomplete="name" placeholder="John Doe" />
+            <mat-label>{{ 'AUTH.FULL_NAME' | translate }}</mat-label>
+            <mat-icon matPrefix aria-hidden="true">person_outline</mat-icon>
+            <input 
+              matInput 
+              id="fullName"
+              formControlName="fullName" 
+              aria-label="Full name"
+              autocomplete="name" 
+              [placeholder]="'AUTH.FULL_NAME_PLACEHOLDER' | translate"
+              [attr.aria-label]="'AUTH.FULL_NAME' | translate"
+              (blur)="form.get('fullName')?.markAsTouched()" 
+            />
             @if (form.get('fullName')?.invalid && form.get('fullName')?.touched) {
-              <mat-error>Full name is required</mat-error>
+              <mat-error>{{ 'AUTH.FULL_NAME_REQUIRED' | translate }}</mat-error>
             }
           </mat-form-field>
 
-          <!-- COMPANY -->
           <mat-form-field appearance="outline">
-            <mat-label>Company Name</mat-label>
-            <mat-icon matPrefix>business_outline</mat-icon>
-            <input matInput formControlName="companyName" autocomplete="organization" placeholder="Acme Inc." />
+            <mat-label>{{ 'AUTH.COMPANY_NAME' | translate }}</mat-label>
+            <mat-icon matPrefix aria-hidden="true">business_outline</mat-icon>
+            <input 
+              matInput 
+              id="companyName"
+              formControlName="companyName" 
+              autocomplete="organization" 
+              aria-label="organization"
+              [placeholder]="'AUTH.COMPANY_NAME_PLACEHOLDER' | translate"
+              [attr.aria-label]="'AUTH.COMPANY_NAME' | translate"
+              (blur)="form.get('companyName')?.markAsTouched()" 
+            />
             @if (form.get('companyName')?.invalid && form.get('companyName')?.touched) {
-              <mat-error>Company name is required</mat-error>
+              <mat-error>{{ 'AUTH.COMPANY_NAME_REQUIRED' | translate }}</mat-error>
             }
           </mat-form-field>
 
-          <!-- EMAIL -->
           <mat-form-field appearance="outline">
-            <mat-label>Email Address</mat-label>
-            <mat-icon matPrefix>mail_outline</mat-icon>
-            <input matInput formControlName="email" autocomplete="email" placeholder="john@example.com" />
+            <mat-label>{{ 'AUTH.EMAIL' | translate }}</mat-label>
+            <mat-icon matPrefix aria-hidden="true">mail_outline</mat-icon>
+            <input 
+              matInput 
+              id="email"
+              formControlName="email" 
+              autocomplete="email" 
+              aria-label="Email address"
+              [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate"
+              [attr.aria-label]="'AUTH.EMAIL' | translate"
+              (blur)="form.get('email')?.markAsTouched()" 
+            />
             @if (form.get('email')?.invalid && form.get('email')?.touched) {
-              <mat-error>Enter a valid email</mat-error>
+              <mat-error>{{ 'AUTH.VALID_EMAIL' | translate }}</mat-error>
             }
           </mat-form-field>
 
-          <!-- PASSWORD -->
           <mat-form-field appearance="outline">
-            <mat-label>Password</mat-label>
-            <mat-icon matPrefix>lock_outline</mat-icon>
-            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" autocomplete="new-password" placeholder="••••••••" />
-            <button mat-icon-button matSuffix type="button" (click)="togglePassword()">
-              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            <mat-label>{{ 'AUTH.PASSWORD' | translate }}</mat-label>
+            <mat-icon matPrefix aria-hidden="true">lock_outline</mat-icon>
+            <input 
+              matInput 
+              id="password"
+              [type]="hidePassword ? 'password' : 'text'" 
+              formControlName="password" 
+              autocomplete="new-password" 
+              aria-label="new-password"
+              [placeholder]="'AUTH.PASSWORD_PLACEHOLDER' | translate"
+              [attr.aria-label]="'AUTH.PASSWORD' | translate"
+              (blur)="form.get('password')?.markAsTouched()" 
+            />
+            <button mat-icon-button matSuffix type="button" (click)="togglePassword()" [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'"
+              aria-label="Toggle password visibility">
+              <mat-icon aria-hidden="true">{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
             </button>
-            @if (form.get('password')?.invalid && form.get('password')?.touched) {
-              <mat-error>Password must be at least 8 characters</mat-error>
+            @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
+              <mat-error>{{ 'AUTH.PASSWORD_REQUIRED' | translate }}</mat-error>
+            }
+            @if (form.get('password')?.hasError('minlength') && form.get('password')?.touched) {
+              <mat-error>{{ 'AUTH.PASSWORD_MIN_LENGTH' | translate }}</mat-error>
+            }
+            @if (form.get('password')?.hasError('noSpaces') && form.get('password')?.touched) {
+              <mat-error>{{ 'AUTH.PASSWORD_NO_SPACES' | translate }}</mat-error>
             }
           </mat-form-field>
 
-          <!-- TERMS -->
-          <mat-checkbox formControlName="terms" class="terms">
-            By signing up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
+          @if (form.get('password')?.value && form.get('password')?.touched) {
+            <div class="password-strength" role="status" aria-live="polite">
+              <div class="strength-bar" [style.width.%]="getPasswordStrength().width" [style.background]="getPasswordStrength().color" [attr.aria-label]="'Password strength: ' + getPasswordStrength().label"></div>
+              <span class="strength-label">{{ getPasswordStrength().label }}</span>
+            </div>
+          }
+
+          <mat-checkbox formControlName="terms" class="terms" (blur)="form.get('terms')?.markAsTouched()">
+            {{ 'AUTH.AGREE_TO_TERMS_PART1' | translate }} <a href="#">{{ 'AUTH.TERMS' | translate }}</a> {{ 'AUTH.AGREE_TO_TERMS_PART2' | translate }} <a href="#">{{ 'AUTH.PRIVACY_POLICY' | translate }}</a>
           </mat-checkbox>
 
-          <!-- SUBMIT -->
-          <button mat-raised-button class="submit-btn" [disabled]="form.invalid || loading">
+          <button mat-raised-button type="submit" class="submit-btn" [disabled]="form.invalid || loading" [attr.aria-label]="loading ? 'Creating account...' : 'Get started'">
             @if (loading) {
-              <mat-spinner diameter="22"></mat-spinner>
+              <mat-spinner diameter="22" aria-label="Loading"></mat-spinner>
             } @else {
               <span class="btn-content">
-                Get Started Now
-                <mat-icon>arrow_forward</mat-icon>
+                {{ 'AUTH.GET_STARTED' | translate }}
+                <mat-icon aria-hidden="true">arrow_forward</mat-icon>
               </span>
             }
           </button>
         </form>
 
-        <!-- SIGN IN LINK -->
         <p class="signin-link">
-          Already have an account? <a routerLink="/auth/sign-in">Sign in</a>
+          {{ 'AUTH.HAVE_ACCOUNT' | translate }} <a routerLink="/auth/sign-in">{{ 'AUTH.SIGN_IN' | translate }}</a>
         </p>
       </mat-card-content>
     </mat-card>

@@ -1,0 +1,277 @@
+<div class="create-client-container">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+
+    <app-top-bar
+      title="{{ 'CLIENTS.EDIT_TITLE' | translate }}"
+      [showMenuButton]="true"
+      [showBackButton]="true"
+      [showSearch]="false"
+      [showNotifications]="true"
+      [showAvatar]="true"
+      [showUserInfo]="false"
+      (onMenuClick)="toggleSidebar()"
+      (onBackClick)="cancel()"
+    ></app-top-bar>
+
+    <div class="create-content">
+
+      <div class="page-header">
+        <div>
+          <h1>{{ 'CLIENTS.EDIT_TITLE' | translate }}</h1>
+          <p class="subtitle">{{ 'CLIENTS.EDIT_SUBTITLE' | translate }}</p>
+        </div>
+
+        <div class="action-buttons desktop">
+          <button class="cancel-btn" (click)="cancel()">
+            {{ 'COMMON.CANCEL' | translate }}
+          </button>
+
+          <button class="save-btn" [disabled]="isSaving" (click)="saveClient()">
+            @if (isSaving) {
+              <mat-icon>hourglass_empty</mat-icon>
+              {{ 'COMMON.SAVING' | translate }}
+            } @else {
+              {{ 'CLIENTS.UPDATE_CLIENT' | translate }}
+            }
+          </button>
+        </div>
+      </div>
+
+      <form [formGroup]="clientForm" class="form-content">
+
+        <!-- ================= BASIC INFO ================= -->
+        <div class="form-card">
+          <div class="card-header">
+            <mat-icon>person</mat-icon>
+            <h3>
+              {{ 'CLIENTS.BASIC_INFO' | translate }}
+              <span class="required-star">*</span>
+            </h3>
+          </div>
+
+          <div class="card-body two-columns">
+
+            <!-- FULL NAME -->
+            <div class="form-field">
+              <label for="fullName">
+                {{ 'CLIENTS.FULL_NAME' | translate }} *
+              </label>
+
+              <input
+                id="fullName"
+                type="text"
+                formControlName="fullName"
+                class="form-input"
+                [placeholder]="'CLIENTS.FULL_NAME_PLACEHOLDER' | translate"
+                aria-label="Full name"
+              />
+            </div>
+
+            <!-- EMAIL -->
+            <div class="form-field">
+              <label for="email">
+                {{ 'CLIENTS.EMAIL' | translate }} *
+              </label>
+
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                class="form-input"
+                [placeholder]="'CLIENTS.EMAIL_PLACEHOLDER' | translate"
+                aria-label="Email"
+              />
+            </div>
+
+            <!-- PHONE -->
+            <div class="form-field">
+              <label for="phone">
+                {{ 'CLIENTS.PHONE' | translate }} *
+              </label>
+
+              <input
+                id="phone"
+                type="tel"
+                formControlName="phone"
+                class="form-input"
+                [placeholder]="'CLIENTS.PHONE_PLACEHOLDER' | translate"
+                aria-label="Phone"
+              />
+            </div>
+
+            <!-- TAX ID -->
+            <div class="form-field">
+              <label for="taxId">
+                {{ 'CLIENTS.TAX_ID' | translate }}
+              </label>
+
+              <input
+                id="taxId"
+                type="text"
+                formControlName="taxId"
+                class="form-input"
+                [placeholder]="'CLIENTS.TAX_ID_PLACEHOLDER' | translate"
+                aria-label="Tax ID"
+              />
+            </div>
+
+            <!-- VAT -->
+            <div class="form-field">
+              <label for="vatNumber">
+                {{ 'CLIENTS.VAT_NUMBER' | translate }}
+              </label>
+
+              <input
+                id="vatNumber"
+                type="text"
+                formControlName="vatNumber"
+                class="form-input"
+                [placeholder]="'CLIENTS.VAT_NUMBER_PLACEHOLDER' | translate"
+                aria-label="VAT number"
+              />
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ================= COMPANY DETAILS ================= -->
+        <div class="form-card">
+          <div class="card-header">
+            <mat-icon>business</mat-icon>
+            <h3>
+              {{ 'CLIENTS.COMPANY_DETAILS' | translate }}
+              <span class="required-star">*</span>
+            </h3>
+          </div>
+
+          <div class="card-body two-columns">
+
+            <!-- COMPANY NAME -->
+            <div class="form-field col-span-full">
+              <label for="companyName">
+                {{ 'CLIENTS.COMPANY_NAME' | translate }} *
+              </label>
+
+              <input
+                id="companyName"
+                type="text"
+                formControlName="companyName"
+                class="form-input"
+                [placeholder]="'CLIENTS.COMPANY_NAME_PLACEHOLDER' | translate"
+                aria-label="Company name"
+              />
+            </div>
+
+            <!-- STREET -->
+            <div class="form-field col-span-full">
+              <label for="street">
+                {{ 'CLIENTS.STREET_ADDRESS' | translate }} *
+              </label>
+
+              <input
+                id="street"
+                type="text"
+                formControlName="street"
+                class="form-input"
+                [placeholder]="'CLIENTS.STREET_PLACEHOLDER' | translate"
+                aria-label="Street address"
+              />
+            </div>
+
+            <!-- CITY -->
+            <div class="form-field">
+              <label for="city">
+                {{ 'CLIENTS.CITY' | translate }} *
+              </label>
+
+              <input
+                id="city"
+                type="text"
+                formControlName="city"
+                class="form-input"
+                [placeholder]="'CLIENTS.CITY_PLACEHOLDER' | translate"
+                aria-label="City"
+              />
+            </div>
+
+            <!-- POSTAL CODE -->
+            <div class="form-field">
+              <label for="postalCode">
+                {{ 'CLIENTS.POSTAL_CODE' | translate }}
+              </label>
+
+              <input
+                id="postalCode"
+                type="text"
+                formControlName="postalCode"
+                class="form-input"
+                [placeholder]="'CLIENTS.POSTAL_CODE_PLACEHOLDER' | translate"
+                aria-label="Postal code"
+              />
+            </div>
+
+            <!-- COUNTRY -->
+            <div class="form-field">
+              <label for="country">
+                {{ 'CLIENTS.COUNTRY' | translate }} *
+              </label>
+
+              <div class="autocomplete-wrapper">
+
+                <label for="countrySearch" class="visually-hidden">
+                  Search country
+                </label>
+
+                <input
+                  id="countrySearch"
+                  type="text"
+                  [(ngModel)]="countrySearch"
+                  [ngModelOptions]="{standalone: true}"
+                  class="form-input"
+                  (input)="onCountrySearch()"
+                  [placeholder]="'CLIENTS.SEARCH_COUNTRY' | translate"
+                  aria-label="Search country"
+                />
+
+                <div class="autocomplete-dropdown" *ngIf="countrySearch">
+                  @for (c of filteredCountries; track c) {
+                    <div class="autocomplete-item" (click)="selectCountry(c)">
+                      {{ c }}
+                    </div>
+                  }
+                </div>
+
+              </div>
+
+              <select
+                id="country"
+                formControlName="country"
+                class="visually-hidden"
+                aria-label="Country"
+              >
+                @for (c of countries; track c) {
+                  <option [value]="c">{{ c }}</option>
+                }
+              </select>
+
+            </div>
+
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <div class="mobile-actions">
+    <button class="cancel-btn" (click)="cancel()">
+      {{ 'COMMON.CANCEL' | translate }}
+    </button>
+
+    <button class="save-btn" [disabled]="isSaving" (click)="saveClient()">
+      {{ 'COMMON.UPDATE' | translate }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,163 @@
+<div class="create-product-container">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+    <app-top-bar
+      title="Edit Product"
+      [showMenuButton]="true"
+      [showBackButton]="true"
+      [showNotifications]="true"
+      [showAvatar]="true"
+      [showUserInfo]="false"
+      (onMenuClick)="toggleSidebar()"
+      (onBackClick)="goBack()"
+    ></app-top-bar>
+
+    <div class="create-content">
+      <div class="page-header">
+        <h1>Edit Product</h1>
+      </div>
+
+      @if (!productForm) {
+        <div class="loading-state">Loading product...</div>
+      } @else {
+        <div class="two-column-layout">
+          <!-- Left Column: Form -->
+          <div class="form-column">
+            <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+              <!-- Entry Classification -->
+              <section class="form-card">
+                <h2 class="section-label">Entry Classification</h2>
+                <div class="type-selector">
+                  <label class="type-option" [class.active]="productType === 'physical'">
+                    <input type="radio" formControlName="type" value="physical" aria-label="Physical product">
+                    <span class="type-icon"><mat-icon>inventory_2</mat-icon></span>
+                    <div class="type-info">
+                      <span class="type-title">Physical product</span>
+                      <span class="type-desc">track stock & quantities</span>
+                    </div>
+                  </label>
+                  <label class="type-option" [class.active]="productType === 'service'">
+                    <input type="radio" formControlName="type" value="service" aria-label="Service">
+                    <span class="type-icon"><mat-icon>medical_services</mat-icon></span>
+                    <div class="type-info">
+                      <span class="type-title">Service</span>
+                      <span class="type-desc">non-stockable billables</span>
+                    </div>
+                  </label>
+                </div>
+              </section>
+
+              <!-- General Information -->
+              <section class="form-card">
+                <h2 class="section-label">General Information</h2>
+                <div class="form-grid">
+                  <div class="form-field">
+                    <label for="edit-product-name">Product Name</label>
+                    <input id="edit-product-name" type="text" formControlName="name" placeholder="e.g., Wireless Headphones" aria-label="Product name">
+                    @if (productForm.get('name')?.invalid && productForm.get('name')?.touched) {
+                      <div class="error">Name is required</div>
+                    }
+                  </div>
+                  <div class="form-field" [class.hidden]="productType === 'service'">
+                    <label for="edit-product-sku">SKU Number</label>
+                    <input id="edit-product-sku" type="text" formControlName="sku" placeholder="e.g., WH-1000XM4" aria-label="SKU number">
+                    @if (productForm.get('sku')?.invalid && productForm.get('sku')?.touched) {
+                      <div class="error">SKU is required for physical products</div>
+                    }
+                  </div>
+                </div>
+              </section>
+
+              <!-- Financial Structure -->
+              <section class="form-card">
+                <h2 class="section-label">Financial Structure</h2>
+                <div class="form-grid three-columns">
+                  <div class="form-field">
+                    <label for="edit-product-price">Unit Price ($)</label>
+                    <input id="edit-product-price" type="number" formControlName="price" step="0.01" aria-label="Unit price">
+                  </div>
+                  <div class="form-field">
+                    <label for="edit-product-taxRate">Tax Rate (%)</label>
+                    <select id="edit-product-taxRate" formControlName="taxRate" aria-label="Tax rate percentage">
+                      <option value="0">0% - Non Taxable</option>
+                      <option value="5">5% - Standard Low</option>
+                      <option value="15">15% - Standard VAT</option>
+                      <option value="20">20% - Premium Rate</option>
+                    </select>
+                  </div>
+                  <div class="form-field">
+                    <label for="edit-product-unit">Measurement Unit</label>
+                    <select id="edit-product-unit" formControlName="unit" aria-label="Measurement unit">
+                    @for (unit of unitOptions; track $index) {
+                        <option [value]="unit">{{ unit }}</option>
+                    }
+                    </select>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Warehouse Ledger -->
+              @if (productType === 'physical') {
+                <section class="form-card">
+                  <div class="section-header">
+                    <h2 class="section-label">Warehouse Ledger</h2>
+                    <span class="active-badge">Active Tracking</span>
+                  </div>
+                  <div class="form-grid two-columns">
+                    <div class="form-field">
+                      <label for="edit-product-initialStock">Stock Level</label>
+                      <div class="stock-control">
+                        <button type="button" (click)="decrementStock()" aria-label="Decrease stock"><mat-icon>remove</mat-icon></button>
+                        <input id="edit-product-initialStock" type="number" formControlName="initialStock" readonly aria-label="Current stock quantity">
+                        <button type="button" (click)="incrementStock()" aria-label="Increase stock"><mat-icon>add</mat-icon></button>
+                      </div>
+                    </div>
+                    <div class="form-field">
+                      <label for="edit-product-lowStockThreshold">Low Stock Threshold</label>
+                      <input id="edit-product-lowStockThreshold" type="number" formControlName="lowStockThreshold" placeholder="Optional" aria-label="Low stock threshold">
+                    </div>
+                  </div>
+                </section>
+              }
+
+              <div class="form-actions">
+                <button type="button" class="btn-secondary" (click)="cancel()" aria-label="Cancel editing">Cancel</button>
+                <button type="submit" class="btn-primary" [disabled]="isSubmitting" aria-label="Update product">Update Product</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Right Column: Preview -->
+          <div class="preview-column">
+            <div class="preview-card">
+              <div class="preview-image">
+                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop" alt="Product preview placeholder" aria-label="Product preview image">
+                <div class="preview-badge" [class]="getBadgeClass()" aria-label="Product type badge">{{ getBadgeLabel() }}</div>
+              </div>
+              <div class="preview-details">
+                <h3 class="preview-name" aria-label="Product name preview">{{ previewName }}</h3>
+                <p class="preview-sku" aria-label="SKU preview">SKU: {{ previewSku }}</p>
+                <div class="preview-totals">
+                  <div class="totals-row" aria-label="Subtotal"><span>Subtotal</span><span>{{ previewSubtotal | appCurrency  }}</span></div>
+                  <div class="totals-row" aria-label="Tax amount"><span>Tax ({{ taxRate }}%)</span><span>{{ previewTax | appCurrency  }}</span></div>
+                  <div class="totals-row grand-total" aria-label="Grand total"><span>Grand Total</span><span>{{ previewTotal | appCurrency  }}</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="tip-card" aria-label="Information tip">
+              <div class="tip-icon"><mat-icon aria-hidden="true">{{ getTipIcon() }}</mat-icon></div>
+              <div class="tip-content"><h4>Ledger Strategy</h4><p>{{ getTipText() }}</p></div>
+            </div>
+            <div class="meta-card" aria-label="Security metadata">
+              <div class="meta-item"><mat-icon aria-hidden="true">lock</mat-icon><span>Encrypted Audit Log</span></div>
+              <span class="version">v4.2.1</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </main>
+
+  <app-bottom-nav></app-bottom-nav>
+</div>

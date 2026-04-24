@@ -1,1 +1,265 @@
-<p>create-invoice works!</p>
+<div class="create-invoice-container">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+    <app-top-bar
+      title="{{ 'INVOICES.CREATE_TITLE' | translate }}"
+      [showMenuButton]="true"
+      [showBackButton]="true"
+      [showNotifications]="true"
+      [showAvatar]="true"
+      [showUserInfo]="false"
+      (onMenuClick)="toggleSidebar()"
+      (onBackClick)="goBack()"
+    ></app-top-bar>
+
+    <div class="create-content">
+      <div class="page-header">
+        <div>
+          <h1>{{ 'INVOICES.CREATE_NEW_INVOICE' | translate }}</h1>
+          <p class="subtitle">
+            {{ 'INVOICES.DRAFTING_NUMBER' | translate }} {{ newInvoiceNumber }}
+          </p>
+        </div>
+
+        <div class="action-buttons">
+        <button 
+          type="button" 
+          class="draft-btn" 
+          data-testid="save-draft-btn"
+          (click)="saveAsDraft()">
+          {{ 'INVOICES.SAVE_AS_DRAFT' | translate }}
+        </button>
+
+          <button class="generate-btn" (click)="generatePDF()" [disabled]="isSaving">
+            <mat-icon>picture_as_pdf</mat-icon>
+            {{ 'INVOICES.GENERATE_PDF' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <form [formGroup]="invoiceForm" class="form-content">
+
+        <!-- CLIENT -->
+        <div class="form-card">
+          <div class="card-header">
+            <mat-icon>person_add</mat-icon>
+            <h3>{{ 'INVOICES.CLIENT_INFORMATION' | translate }}</h3>
+          </div>
+
+          <div class="card-body two-columns">
+
+            <div class="form-field">
+              <label for="clientSelect">
+                {{ 'INVOICES.SELECT_CLIENT' | translate }} *
+              </label>
+
+              <input
+                id="clientSelect"
+                type="text"
+                formControlName="clientId"
+                [matAutocomplete]="clientAuto"
+                class="form-input"
+                data-testid="client-input"
+                [placeholder]="'INVOICES.SEARCH_CLIENT' | translate"
+              />
+
+              <mat-autocomplete
+                #clientAuto="matAutocomplete"
+                [displayWith]="displayClient"
+                (optionSelected)="onClientSelected($event)"
+              >
+                @for (client of filteredClients | async; track client.id) {
+                  <mat-option [value]="client">
+                    {{ client.name }} ({{ client.company }})
+                  </mat-option>
+                }
+              </mat-autocomplete>
+
+              <button type="button" class="quick-add-btn" (click)="quickCreateClient()">
+                + {{ 'INVOICES.NEW_CLIENT' | translate }}
+              </button>
+            </div>
+
+
+<div class="form-field">
+  <label for="invoiceDate">{{ 'INVOICES.INVOICE_DATE' | translate }} *</label>
+  
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>{{ 'INVOICES.INVOICE_DATE' | translate }}</mat-label>
+    <input
+      matInput
+      id="invoiceDate"
+      [matDatepicker]="invoiceDatePicker"
+      formControlName="invoiceDate"
+      [attr.aria-label]="'INVOICES.INVOICE_DATE' | translate"
+    />
+    <mat-datepicker-toggle matSuffix [for]="invoiceDatePicker"></mat-datepicker-toggle>
+    <mat-datepicker #invoiceDatePicker></mat-datepicker>
+    <mat-error *ngIf="invoiceForm.get('invoiceDate')?.hasError('required')">
+      {{ 'INVOICES.DATE_REQUIRED_ERROR' | translate }}
+    </mat-error>
+  </mat-form-field>
+</div>
+
+          </div>
+        </div>
+
+        <!-- PRODUCTS -->
+        <div class="form-card">
+          <div class="card-header">
+            <mat-icon>list_alt</mat-icon>
+            <h3>{{ 'INVOICES.PRODUCTS_SERVICES' | translate }}</h3>
+          </div>
+
+          <div class="table-responsive">
+            <table class="line-items-table">
+              <thead>
+                <tr>
+                  <th>{{ 'INVOICES.DESCRIPTION' | translate }}</th>
+                  <th class="qty-col">{{ 'INVOICES.QTY' | translate }}</th>
+                  <th class="price-col">{{ 'INVOICES.PRICE' | translate }}</th>
+                  <th class="total-col">{{ 'INVOICES.TOTAL' | translate }}</th>
+                  <th></th>
+                </tr>
+              </thead>
+
+              <tbody formArrayName="lineItems">
+                @for (item of lineItems.controls; track item; let i = $index) {
+                  <tr [formGroupName]="i">
+
+                    <!-- DESCRIPTION -->
+                    <td class="description-cell">
+                      <label class="sr-only" for="description_{{i}}">Description</label>
+
+                      <input
+                        id="description_{{i}}"
+                        type="text"
+                        formControlName="description"
+                        class="form-input"
+                        [placeholder]="'INVOICES.PRODUCT_SERVICE_NAME' | translate"
+                        aria-label="Description"
+                        (input)="updateProductSuggestions(i, $any($event.target).value)"
+                      />
+                    </td>
+
+                    <!-- QTY -->
+                    <td>
+                      <label class="sr-only" for="quantity_{{i}}">Quantity</label>
+
+                      <input
+                        id="quantity_{{i}}"
+                        type="number"
+                        formControlName="quantity"
+                        class="form-input"
+                        min="1"
+                        aria-label="Quantity"
+                      />
+                    </td>
+
+                    <!-- PRICE -->
+                    <td>
+                      <label class="sr-only" for="price_{{i}}">Price</label>
+
+                      <input
+                        id="price_{{i}}"
+                        type="number"
+                        formControlName="price"
+                        class="form-input"
+                        min="0"
+                        step="0.01"
+                        aria-label="Price"
+                      />
+                    </td>
+
+                    <!-- TOTAL -->
+                    <td>
+                      {{ (item.get('quantity')?.value || 0) * (item.get('price')?.value || 0) | appCurrency }}
+                    </td>
+
+                    <!-- ACTION -->
+                    <td>
+                      <button
+                        type="button"
+                        class="icon-btn"
+                        (click)="removeLineItem(i)"
+                        aria-label="Remove item"
+                      >
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </td>
+
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="add-line">
+          <button 
+            type="button" 
+            data-testid="add-line-btn"
+            (click)="addLineItem()">
+            <mat-icon>add_circle</mat-icon>
+            {{ 'INVOICES.ADD_LINE' | translate }}
+          </button>
+          </div>
+        </div>
+
+        <!-- NOTES + TOTAL -->
+        <div class="summary-grid">
+
+          <div class="notes-card">
+            <label for="invoiceNotes">
+              {{ 'INVOICES.INVOICE_NOTES' | translate }}
+            </label>
+
+            <textarea
+              id="invoiceNotes"
+              formControlName="notes"
+              rows="4"
+              [placeholder]="'INVOICES.NOTES_PLACEHOLDER' | translate"
+              aria-label="Invoice notes"
+            ></textarea>
+          </div>
+
+          <div class="totals-card">
+            <div class="total-row">
+              <span>{{ 'INVOICES.SUBTOTAL' | translate }}</span>
+              <span>{{ subtotal | appCurrency }}</span>
+            </div>
+
+            <div class="total-row">
+              <span>{{ 'INVOICES.VAT' | translate }} (19%)</span>
+              <span>{{ vat | appCurrency }}</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="total-row grand-total">
+              <span>{{ 'INVOICES.GRAND_TOTAL' | translate }}</span>
+              <span>{{ grandTotal | appCurrency }}</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+        <button 
+          type="button" 
+          class="save-invoice-btn" 
+          data-testid="save-invoice-btn"
+          (click)="saveInvoice()">
+          {{ 'INVOICES.SAVE_INVOICE' | translate }}
+        </button>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <div class="mobile-actions">
+    <button (click)="saveAsDraft()">{{ 'INVOICES.DRAFT' | translate }}</button>
+    <button (click)="generatePDF()">{{ 'INVOICES.GENERATE_PDF' | translate }}</button>
+  </div>
+</div>

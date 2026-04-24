@@ -1,0 +1,277 @@
+<div class="products-container">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+    <app-top-bar
+      title="{{ 'PRODUCTS.TITLE' | translate }}"
+      [showMenuButton]="true"
+      [showSearch]="false"
+      [showNotifications]="true"
+      [showAvatar]="true"
+      [showUserInfo]="false"
+      (onMenuClick)="toggleSidebar()"
+    ></app-top-bar>
+
+    <div class="products-content">
+
+      <!-- HEADER -->
+      <div class="page-header">
+        <div>
+          <h1>{{ 'PRODUCTS.TITLE' | translate }}</h1>
+          <p class="subtitle">{{ 'PRODUCTS.SUBTITLE' | translate }}</p>
+        </div>
+
+        <button
+          type="button"
+          class="btn-primary create-product-btn"
+          (click)="createProduct()"
+          aria-label="Create new product"
+        >
+          <mat-icon aria-hidden="true">add</mat-icon>
+          {{ 'PRODUCTS.CREATE_PRODUCT' | translate }}
+        </button>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="filters-section">
+
+        <!-- SEARCH -->
+        <div class="search-field">
+          <mat-icon aria-hidden="true">search</mat-icon>
+
+          <label for="productSearch" class="visually-hidden">
+            {{ 'PRODUCTS.SEARCH' | translate }}
+          </label>
+
+          <input
+            id="productSearch"
+            type="text"
+            [placeholder]="'PRODUCTS.SEARCH_PLACEHOLDER' | translate"
+            (input)="onSearchChange($any($event.target).value)"
+            [attr.aria-label]="'PRODUCTS.SEARCH' | translate"
+          >
+        </div>
+
+        <!-- TYPE FILTER -->
+        <div class="filter-group">
+          <label id="typeFilterLabel">
+            {{ 'PRODUCTS.FILTER_BY_TYPE' | translate }}
+          </label>
+
+          <div class="filter-pills" role="group" aria-labelledby="typeFilterLabel">
+            <button type="button" class="filter-pill"
+              [class.active]="productService.typeFilter() === 'all'"
+              (click)="setTypeFilter('all')"
+              aria-label="Filter all products">
+              {{ 'PRODUCTS.ALL' | translate }}
+            </button>
+
+            <button type="button" class="filter-pill"
+              [class.active]="productService.typeFilter() === 'physical'"
+              (click)="setTypeFilter('physical')"
+              aria-label="Filter physical products">
+              {{ 'PRODUCTS.PHYSICAL' | translate }}
+            </button>
+
+            <button type="button" class="filter-pill"
+              [class.active]="productService.typeFilter() === 'service'"
+              (click)="setTypeFilter('service')"
+              aria-label="Filter services">
+              {{ 'PRODUCTS.SERVICE' | translate }}
+            </button>
+          </div>
+        </div>
+
+        <!-- STOCK FILTER -->
+        <div class="filter-group">
+          <label for="stockFilter">
+            {{ 'PRODUCTS.FILTER_BY_STOCK' | translate }}
+          </label>
+
+          <select
+            id="stockFilter"
+            class="stock-select"
+            (change)="onStockChange($event)"
+            aria-label="Filter by stock status"
+          >
+            <option value="all">{{ 'PRODUCTS.ALL' | translate }}</option>
+            <option value="in_stock">{{ 'PRODUCTS.IN_STOCK' | translate }}</option>
+            <option value="low_stock">{{ 'PRODUCTS.LOW_STOCK' | translate }}</option>
+            <option value="out_of_stock">{{ 'PRODUCTS.OUT_OF_STOCK' | translate }}</option>
+          </select>
+        </div>
+
+        <!-- PRICE FILTER -->
+        <div class="filter-group">
+          <label id="priceFilterLabel">
+            {{ 'PRODUCTS.PRICE_RANGE' | translate }}
+          </label>
+
+          <div class="price-inputs" role="group" aria-labelledby="priceFilterLabel">
+
+            <input
+              type="number"
+              [(ngModel)]="minPriceValue"
+              [placeholder]="'PRODUCTS.MIN_PRICE' | translate"
+              (change)="applyPriceFilter()"
+              aria-label="Minimum price"
+            >
+
+            <span>-</span>
+
+            <input
+              type="number"
+              [(ngModel)]="maxPriceValue"
+              [placeholder]="'PRODUCTS.MAX_PRICE' | translate"
+              (change)="applyPriceFilter()"
+              aria-label="Maximum price"
+            >
+
+            <button
+              type="button"
+              class="clear-price"
+              (click)="clearPriceFilter()"
+              aria-label="Clear price filter"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <button type="button"
+          class="sort-stock-btn"
+          (click)="toggleSortByStock()"
+          aria-label="Sort by stock">
+          <mat-icon aria-hidden="true">sort_by_alpha</mat-icon>
+        </button>
+
+        <button type="button"
+          class="export-btn"
+          (click)="exportToExcel()"
+          aria-label="Export products">
+          <mat-icon aria-hidden="true">file_download</mat-icon>
+          {{ 'PRODUCTS.EXPORT' | translate }}
+        </button>
+
+      </div>
+
+      <!-- GRID -->
+      <div class="products-grid">
+
+        @for (product of productService.paginatedProducts(); track product.id) {
+          <!-- Use a div with click handler instead of role="button" to avoid nested interactive elements -->
+          <div class="product-card" (click)="viewProductDetail(product)">
+            
+            <!-- BADGES -->
+            <div class="card-badges">
+              @if (product.type === 'service') {
+                <span class="badge" aria-label="Service product">Service</span>
+              } @else {
+                <span class="badge" aria-label="Physical product">Physical</span>
+              }
+            </div>
+
+            <!-- IMAGE - Fixed alt text -->
+<div class="product-media">
+  @if (product.type === 'physical' && product.imageUrl) {
+    <img [src]="product.imageUrl" [alt]="product.name || 'Product image'" loading="lazy" alt="">
+  } @else {
+    <div class="service-placeholder" aria-hidden="true">
+      <mat-icon aria-hidden="true">design_services</mat-icon>
+    </div>
+  }
+</div>
+
+            <!-- INFO -->
+            <div class="product-info">
+              <h3 class="product-name">{{ product.name }}</h3>
+              <p class="product-sku">{{ product.sku }}</p>
+              <p class="product-description">{{ product.description }}</p>
+            </div>
+
+            <!-- ACTIONS - Stop propagation so clicking buttons doesn't trigger card click -->
+            <div class="card-actions" (click)="$event.stopPropagation()">
+              <button type="button"
+                class="icon-action"
+                (click)="editProduct(product)"
+                aria-label="Edit product">
+                <mat-icon aria-hidden="true">edit</mat-icon>
+              </button>
+
+              <button type="button"
+                class="icon-action"
+                (click)="viewInvoices(product)"
+                aria-label="View invoices">
+                <mat-icon aria-hidden="true">receipt</mat-icon>
+              </button>
+
+              <button type="button"
+                class="icon-action delete"
+                (click)="deleteProduct(product.id)"
+                aria-label="Delete product">
+                <mat-icon aria-hidden="true">delete</mat-icon>
+              </button>
+            </div>
+
+          </div>
+        }
+
+        @empty {
+          <div class="empty-state">
+            <mat-icon aria-hidden="true">inventory_2</mat-icon>
+            <p>{{ 'PRODUCTS.NO_PRODUCTS' | translate }}</p>
+
+            <button type="button"
+              class="btn-primary"
+              (click)="createProduct()"
+              aria-label="Add first product">
+              {{ 'PRODUCTS.ADD_FIRST' | translate }}
+            </button>
+          </div>
+        }
+
+      </div>
+
+      <!-- PAGINATION -->
+      @if (productService.totalPages() > 1) {
+        <div class="pagination">
+
+          <button type="button"
+            class="page-btn"
+            (click)="prevPage()"
+            aria-label="Previous page">
+            <mat-icon aria-hidden="true">chevron_left</mat-icon>
+          </button>
+
+          @for (page of getPages(); track page) {
+            <button type="button"
+              class="page-number"
+              (click)="goToPage(page)"
+              [attr.aria-label]="'Go to page ' + page">
+              {{ page }}
+            </button>
+          }
+
+          <button type="button"
+            class="page-btn"
+            (click)="nextPage()"
+            aria-label="Next page">
+            <mat-icon aria-hidden="true">chevron_right</mat-icon>
+          </button>
+
+        </div>
+      }
+
+    </div>
+  </main>
+
+  <app-bottom-nav></app-bottom-nav>
+
+  <button class="fab-btn"
+    (click)="createProduct()"
+    aria-label="Add new product">
+    <mat-icon aria-hidden="true">add</mat-icon>
+  </button>
+
+</div>

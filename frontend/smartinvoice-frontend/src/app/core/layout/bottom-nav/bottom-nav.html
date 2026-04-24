@@ -1,0 +1,67 @@
+<nav class="bottom-nav" aria-label="Main navigation">
+  <a 
+    routerLink="/dashboard" 
+    routerLinkActive="active" 
+    class="nav-item-bottom"
+    [attr.aria-current]="(router.url === '/dashboard') ? 'page' : null"
+    aria-label="Dashboard"
+  >
+    <mat-icon aria-hidden="true">dashboard</mat-icon>
+    <span>{{ 'SIDEBAR.DASHBOARD' | translate }}</span>
+  </a>
+  
+  <a 
+    routerLink="/invoices" 
+    routerLinkActive="active" 
+    class="nav-item-bottom"
+    [attr.aria-current]="(router.url.startsWith('/invoices')) ? 'page' : null"
+    aria-label="Invoices"
+  >
+    <mat-icon aria-hidden="true">description</mat-icon>
+    <span>{{ 'SIDEBAR.INVOICES' | translate }}</span>
+  </a>
+  
+  <a 
+    routerLink="/products" 
+    routerLinkActive="active" 
+    class="nav-item-bottom"
+    [attr.aria-current]="(router.url.startsWith('/products')) ? 'page' : null"
+    aria-label="Products"
+  >
+    <mat-icon aria-hidden="true">inventory_2</mat-icon>
+    <span>{{ 'SIDEBAR.PRODUCTS' | translate }}</span>
+  </a>
+  
+  <a 
+    routerLink="/clients" 
+    routerLinkActive="active" 
+    class="nav-item-bottom"
+    [attr.aria-current]="(router.url.startsWith('/clients')) ? 'page' : null"
+    aria-label="Clients"
+  >
+    <mat-icon aria-hidden="true">group</mat-icon>
+    <span>{{ 'SIDEBAR.CLIENTS' | translate }}</span>
+  </a>
+
+  <a 
+    routerLink="/analytics" 
+    routerLinkActive="active" 
+    class="nav-item-bottom"
+    [attr.aria-current]="(router.url.startsWith('/analytics')) ? 'page' : null"
+    aria-label="Analytics"
+  >
+    <mat-icon aria-hidden="true">analytics</mat-icon>
+    <span>{{ 'SIDEBAR.REPORTS' | translate }}</span>
+  </a>
+  
+  <a 
+    routerLink="/settings" 
+    routerLinkActive="active" 
+    class="nav-item-bottom"
+    [attr.aria-current]="(router.url.startsWith('/settings')) ? 'page' : null"
+    aria-label="Settings"
+  >
+    <mat-icon aria-hidden="true">settings</mat-icon>
+    <span>{{ 'SIDEBAR.SETTINGS' | translate }}</span>
+  </a>
+</nav>

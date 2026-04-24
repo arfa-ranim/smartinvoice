@@ -1,1 +1,159 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+    <app-top-bar
+      [showMenuButton]="true"
+      [showSearch]="true"
+      [searchPlaceholder]="'DASHBOARD.SEARCH_PLACEHOLDER' | translate"
+      [showUserInfo]="true"
+      userName="Alex Rivera"
+      userRole="Administrator"
+      (onMenuClick)="toggleSidebar()"
+      (onSearchChange)="onGlobalSearch($event)"
+    ></app-top-bar>
+
+    <div class="dashboard-content">
+      <div class="dashboard-header">
+        <div>
+          <h1>{{ 'DASHBOARD.TITLE' | translate }}</h1>
+          <p>{{ 'DASHBOARD.WELCOME' | translate }}</p>
+        </div>
+        <button class="create-invoice-btn" (click)="createInvoice()">
+          <mat-icon>add</mat-icon> {{ 'DASHBOARD.CREATE_INVOICE' | translate }}
+        </button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card clickable" (click)="navigateToInvoices()">
+          <div class="stat-header">
+            <div class="stat-icon primary-bg"><mat-icon>article</mat-icon></div>
+          </div>
+          <p class="stat-label">{{ 'DASHBOARD.TOTAL_INVOICES' | translate }}</p>
+          <h3 class="stat-value">{{ stats.totalInvoices | number }}</h3>
+        </div>
+        <div class="stat-card clickable" (click)="navigateToInvoices()">
+          <div class="stat-header">
+            <div class="stat-icon accent-bg"><mat-icon>account_balance_wallet</mat-icon></div>
+          </div>
+          <p class="stat-label">{{ 'DASHBOARD.MONTHLY_REVENUE' | translate }}</p>
+          <h3 class="stat-value">{{ stats.monthlyRevenue | currency:'USD':'symbol':'1.2-2' }}</h3>
+        </div>
+        <div class="stat-card clickable" (click)="navigateToInvoices()">
+          <div class="stat-header">
+            <div class="stat-icon gold-bg"><mat-icon>pending_actions</mat-icon></div>
+          </div>
+          <p class="stat-label">{{ 'DASHBOARD.PENDING_PAYMENTS' | translate }}</p>
+          <h3 class="stat-value">{{ stats.pendingPayments }}</h3>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-header">
+            <h4>{{ 'DASHBOARD.REVENUE_TRENDS' | translate }}</h4>
+            <label for="period">{{ 'DASHBOARD.SELECT_PERIOD' | translate }}</label>
+            <select id="period" class="period-select" (change)="onPeriodChange($event)">
+              <option value="6months">{{ 'DASHBOARD.LAST_6_MONTHS' | translate }}</option>
+              <option value="year">{{ 'DASHBOARD.LAST_YEAR' | translate }}</option>
+            </select>
+          </div>
+          <div class="revenue-chart-container">
+            <canvas #revenueChartCanvas height="200"></canvas>
+          </div>
+          <p class="chart-hint">{{ 'DASHBOARD.CHART_HINT' | translate }}</p>
+        </div>
+
+        <div class="chart-card">
+          <h4>{{ 'DASHBOARD.PAYMENT_STATUS' | translate }}</h4>
+          <div class="donut-container">
+            <div class="donut-chart">
+              <svg viewBox="0 0 100 100" class="donut-svg">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="var(--border-light)" stroke-width="10"/>
+                <circle cx="50" cy="50" r="45" fill="none" stroke="var(--primary)" stroke-width="10"
+                  stroke-dasharray="283" [attr.stroke-dashoffset]="283 - (283 * paidPercentage / 100)"
+                  stroke-linecap="round" transform="rotate(-90 50 50)"/>
+              </svg>
+              <div class="donut-center">
+                <span class="donut-percent">{{ paidPercentage }}%</span>
+                <span class="donut-label">{{ 'DASHBOARD.COLLECTED' | translate }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="status-legend">
+            <div class="legend-item" [matTooltip]="'DASHBOARD.PAID_TOOLTIP' | translate">
+              <div class="legend-color paid"></div><span>{{ 'DASHBOARD.PAID_INVOICES' | translate }}</span><strong>{{ paymentStatus.paid }}</strong>
+            </div>
+            <div class="legend-item" [matTooltip]="'DASHBOARD.PENDING_TOOLTIP' | translate">
+              <div class="legend-color pending"></div><span>{{ 'DASHBOARD.PENDING' | translate }}</span><strong>{{ paymentStatus.pending }}</strong>
+            </div>
+            <div class="legend-item" [matTooltip]="'DASHBOARD.OVERDUE_TOOLTIP' | translate">
+              <div class="legend-color overdue"></div><span>{{ 'DASHBOARD.OVERDUE' | translate }}</span><strong>{{ paymentStatus.overdue }}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="top-products-card">
+        <h4>{{ 'DASHBOARD.TOP_PRODUCTS' | translate }}</h4>
+        <div class="products-list">
+          @for (product of topProducts; track product.name) {
+            <div class="product-item">
+              <span class="product-name">{{ product.name }}</span>
+              <span class="product-stats">{{ product.quantity }} {{ 'DASHBOARD.SOLD' | translate }} · {{ product.revenue | appCurrency }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+<div class="invoices-table-container">
+  <div class="table-header">
+    <h4>{{ 'DASHBOARD.RECENT_INVOICES' | translate }}</h4>
+    <button class="view-all-btn" (click)="viewAllInvoices()">{{ 'DASHBOARD.VIEW_ALL' | translate }}</button>
+  </div>
+  <div class="table-responsive">
+    <table class="invoices-table">
+      <thead>
+        <tr><th>{{ 'DASHBOARD.CLIENT' | translate }}</th><th>{{ 'DASHBOARD.INVOICE_ID' | translate }}</th><th>{{ 'DASHBOARD.AMOUNT' | translate }}</th><th>{{ 'DASHBOARD.STATUS' | translate }}</th><th>{{ 'DASHBOARD.DUE_DATE' | translate }}</th></tr>
+      </thead>
+      <tbody>
+        @for (invoice of invoices; track invoice.id) {
+          <tr class="invoice-row" (click)="viewInvoiceDetails(invoice.id)">
+            <td>
+              <div class="client-info">
+                <div class="client-initials">{{ invoice.clientInitials }}</div>
+                <div>
+                  <p class="client-name">{{ invoice.client }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="invoice-id">{{ invoice.id }}</td>
+            <td class="invoice-amount">{{ invoice.amount | appCurrency }}</td>
+            <td>
+              <span class="status-badge" [class]="getStatusClass(invoice.status)">
+                <mat-icon class="status-icon">{{ getStatusIcon(invoice.status) }}</mat-icon>
+                {{ ('DASHBOARD.STATUS_' + invoice.status.toUpperCase()) | translate }}
+              </span>
+            </td>
+            <td class="due-date">{{ formatDate(invoice.dueDate) }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="5" class="text-center">{{ 'DASHBOARD.NO_INVOICES' | translate }}</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  @if (totalInvoices && totalInvoices > pageSize) {
+    <div class="pagination">
+      <button [disabled]="currentPage === 1" (click)="onPageChange(currentPage-1)">{{ 'DASHBOARD.PREVIOUS' | translate }}</button>
+      <span>{{ 'DASHBOARD.PAGE' | translate }} {{ currentPage }} {{ 'DASHBOARD.OF' | translate }} {{ ceil(totalInvoices / pageSize) }}</span>
+      <button [disabled]="currentPage * pageSize >= totalInvoices" (click)="onPageChange(currentPage+1)">{{ 'DASHBOARD.NEXT' | translate }}</button>
+    </div>
+  }
+</div>
+    </div>
+  </main>
+
+  <button class="fab" [attr.aria-label]="'DASHBOARD.CREATE_INVOICE' | translate" (click)="createInvoice()"><mat-icon>add</mat-icon></button>
+  <app-bottom-nav></app-bottom-nav>
+</div>

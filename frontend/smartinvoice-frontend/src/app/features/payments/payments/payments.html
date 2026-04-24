@@ -1,1 +1,202 @@
-<p>payments works!</p>
+<div class="payments-container">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+    <app-top-bar
+      title="{{ 'PAYMENTS.TITLE' | translate }}"
+      [showMenuButton]="true"
+      [showBackButton]="true"
+      [showNotifications]="true"
+      [showAvatar]="true"
+      [showUserInfo]="false"
+      (onMenuClick)="toggleSidebar()"
+      (onBackClick)="goBack()"
+    ></app-top-bar>
+
+    <div class="payment-content">
+      @if (loading) {
+        <div class="loading-state">{{ 'COMMON.LOADING' | translate }}...</div>
+      } @else if (error || !invoice) {
+        <div class="error-state">
+          <mat-icon>error_outline</mat-icon>
+          <p>{{ 'PAYMENTS.INVOICE_NOT_FOUND_MSG' | translate }}</p>
+          <button class="back-btn" (click)="goBack()">{{ 'PAYMENTS.GO_BACK' | translate }}</button>
+        </div>
+      } @else {
+        <div class="payment-card">
+          <div class="invoice-status-card">
+            <div class="icon-wrapper">
+              <div class="icon-circle">
+                <mat-icon>receipt_long</mat-icon>
+              </div>
+            </div>
+            <div class="invoice-details">
+              <div class="details-header">
+                <span class="label">{{ 'PAYMENTS.INVOICE_DETAILS' | translate }}</span>
+                <span class="status-badge" [class]="invoice.status">
+                  {{ ('INVOICES.STATUS_' + invoice.status.toUpperCase()) | translate }}
+                </span>
+              </div>
+              <p class="invoice-number">{{ invoice.id }}</p>
+              <div class="issue-row">
+                <span class="issue-date">{{ 'PAYMENTS.ISSUED' | translate }}: {{ formatDate(invoice.dueDate) }}</span>
+                <button class="pdf-btn" (click)="onViewPDF()">
+                  <mat-icon>visibility</mat-icon> {{ 'PAYMENTS.VIEW_PDF' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="amount-card">
+            <p class="amount-label">{{ 'PAYMENTS.TOTAL_AMOUNT_DUE' | translate }}</p>
+            <div class="amount-value">
+              <span class="currency">{{ currencyService.getCurrencies()[0].symbol }}</span>{{ grandTotal | number:'1.2-2' }}
+              <span class="currency-code">{{ currencyService.getCurrencies()[0].code }}</span>
+            </div>
+          </div>
+
+          <div class="summary-section">
+            <h3>{{ 'PAYMENTS.ORDER_SUMMARY' | translate }}</h3>
+            <div class="summary-card">
+              @for (item of invoice.lineItems; track $index) {
+                <div class="summary-row">
+                  <div class="item-info">
+                    <span class="item-name">{{ item.description }}</span>
+                    <span class="item-qty">{{ item.quantity }} × {{ currencyService.formatAmount(item.price) }}</span>
+                  </div>
+                  <span class="item-total">{{ currencyService.formatAmount(item.price * item.quantity) }}</span>
+                </div>
+              }
+              <div class="divider"></div>
+              <div class="summary-row subtotal">
+                <span>{{ 'PAYMENTS.SUBTOTAL' | translate }}</span>
+                <span>{{ currencyService.formatAmount(subtotal) }}</span>
+              </div>
+              <div class="summary-row vat">
+                <span>{{ 'PAYMENTS.VAT' | translate }} (19%)</span>
+                <span>{{ currencyService.formatAmount(vat) }}</span>
+              </div>
+              <div class="summary-row grand-total">
+                <span>{{ 'PAYMENTS.GRAND_TOTAL' | translate }}</span>
+                <span class="grand-amount">{{ currencyService.formatAmount(grandTotal) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="billing-section">
+            <h3>{{ 'PAYMENTS.BILLING_INFORMATION' | translate }}</h3>
+            <div class="billing-card">
+              <div class="info-row">
+                <mat-icon>person</mat-icon>
+                <div>
+                  <p class="info-label">{{ 'PAYMENTS.CLIENT_NAME' | translate }}</p>
+                  <p class="info-value">{{ client?.name || invoice.client }}</p>
+                </div>
+              </div>
+              <div class="info-row">
+                <mat-icon>mail</mat-icon>
+                <div>
+                  <p class="info-label">{{ 'PAYMENTS.EMAIL_ADDRESS' | translate }}</p>
+                  <p class="info-value">{{ client?.email || 'N/A' }}</p>
+                </div>
+              </div>
+              @if (client?.company) {
+                <div class="info-row">
+                  <mat-icon>business</mat-icon>
+                  <div>
+                    <p class="info-label">{{ 'PAYMENTS.COMPANY' | translate }}</p>
+                    <p class="info-value">{{ client?.company }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="payment-form-section">
+            <h3>{{ 'PAYMENTS.PAYMENT_DETAILS' | translate }}</h3>
+            <div class="payment-card-form">
+              <div class="form-group">
+              <label for="cardNumber">{{ 'PAYMENTS.CARD_NUMBER' | translate }}</label>
+                      <input 
+                        id="cardNumber" 
+                        data-testid="card-number-input"
+                        type="text" 
+                        [(ngModel)]="cardNumber" 
+                        [placeholder]="'PAYMENTS.CARD_NUMBER_PLACEHOLDER' | translate" 
+                        class="form-input"
+                      >
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="cardExpiry">{{ 'PAYMENTS.EXPIRY' | translate }}</label>
+                  <input id="cardExpiry" type="text" [(ngModel)]="cardExpiry" [placeholder]="'PAYMENTS.EXPIRY_PLACEHOLDER' | translate" class="form-input" [attr.aria-label]="'PAYMENTS.EXPIRY' | translate">
+                </div>
+                <div class="form-group">
+                  <label for="cardCvc">{{ 'PAYMENTS.CVC' | translate }}</label>
+                  <input id="cardCvc" type="text" [(ngModel)]="cardCvc" [placeholder]="'PAYMENTS.CVC_PLACEHOLDER' | translate" class="form-input" [attr.aria-label]="'PAYMENTS.CVC' | translate">
+                </div>
+              </div>
+              <p class="test-card-note">{{ 'PAYMENTS.TEST_CARD_NOTE' | translate }}</p>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+          <button 
+            class="stripe-btn" 
+            data-testid="pay-button"
+            (click)="onPayWithStripe()" 
+            [disabled]="isProcessing"
+          >
+            <mat-icon>payments</mat-icon>
+            <span>{{ isProcessing ? ('PAYMENTS.PROCESSING' | translate) : ('PAYMENTS.PAY_WITH_STRIPE' | translate) }}</span>
+          </button>
+          <button 
+            class="qr-btn" 
+            data-testid="qr-button"
+            (click)="onGenerateQRCode()"
+          >
+            <mat-icon>qr_code_2</mat-icon>
+            <span>{{ 'PAYMENTS.GENERATE_QR_CODE' | translate }}</span>
+          </button>
+            <p class="secure-notice">
+              {{ 'PAYMENTS.SECURE_NOTICE' | translate }}
+            </p>
+          </div>
+        </div>
+      }
+    </div>
+  </main>
+
+@if (showQrModal) {
+  <div class="modal-overlay" data-testid="qr-modal" (click)="closeQrModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>{{ 'PAYMENTS.PAYMENT_QR_CODE' | translate }}</h3>
+      <img 
+        [src]="qrCodeDataUrl" 
+        data-testid="qr-code-image"
+        [alt]="'PAYMENTS.PAYMENT_QR_CODE_ALT' | translate"
+        alt=""
+      >
+      <p>{{ 'PAYMENTS.SCAN_TO_PAY' | translate }}</p>
+      <div class="modal-actions">
+        <button 
+          class="download-btn" 
+          data-testid="qr-download-btn"
+          (click)="downloadQRCode()"
+        >
+          {{ 'PAYMENTS.DOWNLOAD_PNG' | translate }}
+        </button>
+        <button 
+          class="close-btn" 
+          data-testid="qr-close-btn"
+          (click)="closeQrModal()"
+        >
+          {{ 'COMMON.CLOSE' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+  <app-bottom-nav></app-bottom-nav>
+</div>

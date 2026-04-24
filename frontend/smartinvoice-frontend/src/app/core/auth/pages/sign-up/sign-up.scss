@@ -129,6 +129,7 @@
 body.dark-mode .benefit-card {
   background: rgba(15, 23, 42, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 
   .icon {
@@ -481,5 +482,21 @@ body.dark-mode .signin-link {
 
   .benefits-grid {
     grid-template-columns: 1fr;
+  }
+}
+/* Password strength indicator */
+.password-strength {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  .strength-bar {
+    height: 4px;
+    border-radius: 2px;
+    transition: width 0.2s;
+  }
+  .strength-label {
+    font-size: 0.7rem;
+    font-weight: 600;
   }
 }

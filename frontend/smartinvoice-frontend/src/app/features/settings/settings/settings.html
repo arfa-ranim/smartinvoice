@@ -1,1 +1,256 @@
-<p>settings works!</p>
+<div class="settings-container">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+    <app-top-bar
+      title="{{ 'SETTINGS.TITLE' | translate }}"
+      [showMenuButton]="true"
+      [showSearch]="false"
+      [showNotifications]="true"
+      [showAvatar]="true"
+      [showUserInfo]="false"
+      (onMenuClick)="toggleSidebar()"
+    ></app-top-bar>
+
+    <div class="settings-content">
+      <form [formGroup]="settingsForm" class="settings-form">
+
+        <!-- COMPANY INFO -->
+        <app-company-info [parentForm]="settingsForm"></app-company-info>
+
+        <!-- BRANDING -->
+        <app-branding
+          [parentForm]="settingsForm"
+          [logoPreview]="logoPreview"
+          [isDarkMode]="isDarkMode"
+          (logoUpload)="onLogoUpload($event)"
+          (accentColorChange)="onAccentColorChange()"
+          (toggleTheme)="toggleTheme()"
+        ></app-branding>
+
+        <!-- INVOICE DEFAULTS -->
+        <div class="form-card">
+          <h3>{{ 'SETTINGS.INVOICE_DEFAULTS' | translate }}</h3>
+          <div class="form-grid two-columns">
+            <div class="form-field">
+              <label for="invoicePrefix">{{ 'SETTINGS.INVOICE_PREFIX' | translate }}</label>
+              <input 
+                type="text" 
+                id="invoicePrefix"
+                formControlName="invoicePrefix" 
+                placeholder="INV-"
+                aria-label="{{ 'SETTINGS.INVOICE_PREFIX' | translate }}"
+                title="{{ 'SETTINGS.INVOICE_PREFIX' | translate }}"
+              >
+            </div>
+            <div class="form-field">
+              <label for="nextInvoiceNumber">{{ 'SETTINGS.NEXT_INVOICE_NUMBER' | translate }}</label>
+              <input 
+                type="number" 
+                id="nextInvoiceNumber"
+                formControlName="nextInvoiceNumber" 
+                min="1"
+                aria-label="{{ 'SETTINGS.NEXT_INVOICE_NUMBER' | translate }}"
+                title="{{ 'SETTINGS.NEXT_INVOICE_NUMBER' | translate }}"
+              >
+            </div>
+            <div class="form-field">
+              <label for="defaultDueDays">{{ 'SETTINGS.DEFAULT_DUE_DAYS' | translate }}</label>
+              <input 
+                type="number" 
+                id="defaultDueDays"
+                formControlName="defaultDueDays" 
+                min="0"
+                aria-label="{{ 'SETTINGS.DEFAULT_DUE_DAYS' | translate }}"
+                title="{{ 'SETTINGS.DEFAULT_DUE_DAYS' | translate }}"
+              >
+              <span class="field-hint">{{ 'SETTINGS.DEFAULT_DUE_DAYS_HINT' | translate }}</span>
+            </div>
+            <div class="form-field">
+              <label for="defaultPaymentMethod">{{ 'SETTINGS.DEFAULT_PAYMENT_METHOD' | translate }}</label>
+              <select 
+                id="defaultPaymentMethod"
+                formControlName="defaultPaymentMethod"
+                aria-label="{{ 'SETTINGS.DEFAULT_PAYMENT_METHOD' | translate }}"
+                title="{{ 'SETTINGS.DEFAULT_PAYMENT_METHOD' | translate }}"
+              >
+                @for (m of paymentMethods; track m){
+                  <option [value]="m">{{ m }}</option>
+                }
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="lateFeePercent">{{ 'SETTINGS.LATE_FEE' | translate }} (%)</label>
+              <input 
+                type="number" 
+                id="lateFeePercent"
+                formControlName="lateFeePercent" 
+                step="0.5" 
+                min="0"
+                aria-label="{{ 'SETTINGS.LATE_FEE' | translate }}"
+                title="{{ 'SETTINGS.LATE_FEE' | translate }}"
+              >
+            </div>
+          </div>
+
+          <h3 class="section-subtitle">{{ 'SETTINGS.TAX_SETTINGS' | translate }}</h3>
+          <div class="form-grid two-columns">
+            <div class="form-field">
+              <label for="defaultTaxRate">{{ 'SETTINGS.DEFAULT_TAX_RATE' | translate }} (%)</label>
+              <select 
+                id="defaultTaxRate"
+                formControlName="defaultTaxRate"
+                aria-label="{{ 'SETTINGS.DEFAULT_TAX_RATE' | translate }}"
+                title="{{ 'SETTINGS.DEFAULT_TAX_RATE' | translate }}"
+              >
+                @for (r of taxRates; track r){
+                  <option [value]="r">{{ r }}%</option>
+                }
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="internationalTaxRule">{{ 'SETTINGS.INTL_TAX_RULE' | translate }}</label>
+              <select 
+                id="internationalTaxRule"
+                formControlName="internationalTaxRule"
+                aria-label="{{ 'SETTINGS.INTL_TAX_RULE' | translate }}"
+                title="{{ 'SETTINGS.INTL_TAX_RULE' | translate }}"
+              >
+                @for (rule of internationalRules; track rule){
+                  <option [value]="rule">{{ rule }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <h3 class="section-subtitle">{{ 'SETTINGS.LEGAL_NOTICE' | translate }}</h3>
+          <div class="form-field">
+            <label for="legalNotice">{{ 'SETTINGS.LEGAL_NOTICE' | translate }}</label>
+            <textarea 
+              id="legalNotice"
+              formControlName="legalNotice" 
+              rows="3" 
+              placeholder="{{ 'SETTINGS.LEGAL_NOTICE_PLACEHOLDER' | translate }}"
+              aria-label="{{ 'SETTINGS.LEGAL_NOTICE' | translate }}"
+              title="{{ 'SETTINGS.LEGAL_NOTICE' | translate }}"
+            ></textarea>
+          </div>
+
+          <h3 class="section-subtitle">{{ 'SETTINGS.ADVANCED' | translate }}</h3>
+          <div class="form-grid two-columns">
+            <div class="checkbox-field">
+              <label class="toggle-label" for="stripeEnabled">
+                <input 
+                  type="checkbox" 
+                  id="stripeEnabled"
+                  formControlName="stripeEnabled"
+                  aria-label="{{ 'SETTINGS.ENABLE_STRIPE' | translate }}"
+                  title="{{ 'SETTINGS.ENABLE_STRIPE' | translate }}"
+                >
+                {{ 'SETTINGS.ENABLE_STRIPE' | translate }}
+              </label>
+              @if (settingsForm.get('stripeEnabled')?.value) {
+                <div class="stripe-key-wrapper">
+                  <label for="stripeTestKey" class="visually-hidden">{{ 'SETTINGS.STRIPE_TEST_KEY' | translate }}</label>
+                  <input 
+                    [type]="showStripeKey ? 'text' : 'password'" 
+                    id="stripeTestKey"
+                    formControlName="stripeTestKey" 
+                    placeholder="pk_test_..."
+                    aria-label="{{ 'SETTINGS.STRIPE_TEST_KEY' | translate }}"
+                    title="{{ 'SETTINGS.STRIPE_TEST_KEY' | translate }}"
+                  >
+                  <button 
+                    type="button" 
+                    class="toggle-visibility-btn" 
+                    (click)="showStripeKey = !showStripeKey"
+                    aria-label="{{ 'SETTINGS.TOGGLE_STRIPE_KEY_VISIBILITY' | translate }}"
+                    title="{{ 'SETTINGS.TOGGLE_STRIPE_KEY_VISIBILITY' | translate }}"
+                  >
+                    <mat-icon>{{ showStripeKey ? 'visibility_off' : 'visibility' }}</mat-icon>
+                  </button>
+                </div>
+              }
+            </div>
+            <div class="checkbox-field">
+              <label class="toggle-label" for="qrCodeEnabled">
+                <input 
+                  type="checkbox" 
+                  id="qrCodeEnabled"
+                  formControlName="qrCodeEnabled"
+                  aria-label="{{ 'SETTINGS.ENABLE_QR' | translate }}"
+                  title="{{ 'SETTINGS.ENABLE_QR' | translate }}"
+                >
+                {{ 'SETTINGS.ENABLE_QR' | translate }}
+              </label>
+            </div>
+            <div class="checkbox-field">
+              <label class="toggle-label" for="emailReminders">
+                <input 
+                  type="checkbox" 
+                  id="emailReminders"
+                  formControlName="emailReminders"
+                  aria-label="{{ 'SETTINGS.EMAIL_REMINDERS' | translate }}"
+                  title="{{ 'SETTINGS.EMAIL_REMINDERS' | translate }}"
+                >
+                {{ 'SETTINGS.EMAIL_REMINDERS' | translate }}
+              </label>
+              @if (settingsForm.get('emailReminders')?.value) {
+                <div class="reminder-days">
+                  <label for="reminderDaysBefore">{{ 'SETTINGS.REMINDER_DAYS' | translate }}</label>
+                  <input 
+                    type="number" 
+                    id="reminderDaysBefore"
+                    formControlName="reminderDaysBefore" 
+                    min="1"
+                    aria-label="{{ 'SETTINGS.REMINDER_DAYS' | translate }}"
+                    title="{{ 'SETTINGS.REMINDER_DAYS' | translate }}"
+                  >
+                </div>
+              }
+            </div>
+            <div class="checkbox-field">
+              <label class="toggle-label" for="bccCopy">
+                <input 
+                  type="checkbox" 
+                  id="bccCopy"
+                  formControlName="bccCopy"
+                  aria-label="{{ 'SETTINGS.BCC_COPY' | translate }}"
+                  title="{{ 'SETTINGS.BCC_COPY' | translate }}"
+                >
+                {{ 'SETTINGS.BCC_COPY' | translate }}
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="form-card">
+          <h3>{{ 'SETTINGS.ACTIONS' | translate }}</h3>
+          <div class="action-buttons-group">
+            <button type="button" class="btn-secondary" (click)="cancel()" aria-label="{{ 'COMMON.CANCEL' | translate }}" title="{{ 'COMMON.CANCEL' | translate }}">
+              <mat-icon aria-hidden="true">close</mat-icon> {{ 'COMMON.CANCEL' | translate }}
+            </button>
+            <button type="button" class="btn-primary" (click)="saveSettings()" aria-label="{{ 'SETTINGS.SAVE_SETTINGS' | translate }}" title="{{ 'SETTINGS.SAVE_SETTINGS' | translate }}">
+              <mat-icon aria-hidden="true">save</mat-icon> {{ 'SETTINGS.SAVE_SETTINGS' | translate }}
+            </button>
+            <button type="button" class="btn-secondary" (click)="exportData()" aria-label="{{ 'SETTINGS.EXPORT_DATA' | translate }}" title="{{ 'SETTINGS.EXPORT_DATA' | translate }}">
+              <mat-icon aria-hidden="true">file_download</mat-icon> {{ 'SETTINGS.EXPORT_DATA' | translate }}
+            </button>
+            <button type="button" class="btn-danger" (click)="resetDemoData()" aria-label="{{ 'SETTINGS.RESET_DEMO_DATA' | translate }}" title="{{ 'SETTINGS.RESET_DEMO_DATA' | translate }}">
+              <mat-icon aria-hidden="true">restore</mat-icon> {{ 'SETTINGS.RESET_DEMO_DATA' | translate }}
+            </button>
+          </div>
+          <div class="test-email-btn">
+            <button type="button" (click)="testEmailNotification()" aria-label="{{ 'SETTINGS.TEST_EMAIL' | translate }}" title="{{ 'SETTINGS.TEST_EMAIL' | translate }}">
+              <mat-icon aria-hidden="true">email</mat-icon> {{ 'SETTINGS.TEST_EMAIL' | translate }}
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <app-bottom-nav></app-bottom-nav>
+</div>

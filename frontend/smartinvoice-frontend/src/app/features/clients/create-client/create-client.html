@@ -1,0 +1,319 @@
+<div class="create-client-container">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+    <app-top-bar
+      [title]="'CLIENTS.CREATE_TITLE' | translate"
+      [showMenuButton]="true"
+      [showBackButton]="true"
+      [showNotifications]="true"
+      [showAvatar]="true"
+      [showUserInfo]="false"
+      (onMenuClick)="toggleSidebar()"
+      (onBackClick)="cancel()"
+    ></app-top-bar>
+
+    <div class="create-content">
+      <div class="page-header">
+        <div>
+          <h1>{{ 'CLIENTS.CREATE_TITLE' | translate }}</h1>
+          <p class="subtitle">{{ 'CLIENTS.CREATE_SUBTITLE' | translate }}</p>
+        </div>
+
+        <div class="action-buttons desktop">
+          <button class="cancel-btn" (click)="cancel()">
+            <mat-icon>close</mat-icon>
+            {{ 'COMMON.CANCEL' | translate }}
+          </button>
+
+          <button class="save-btn" [disabled]="isSaving" (click)="saveClient()">
+            @if (isSaving) {
+              <mat-icon class="spinner">autorenew</mat-icon>
+              {{ 'COMMON.SAVING' | translate }}
+            } @else {
+              <mat-icon>save</mat-icon>
+              {{ 'CLIENTS.SAVE_CLIENT' | translate }}
+            }
+          </button>
+        </div>
+      </div>
+
+      <form [formGroup]="clientForm" class="form-content">
+
+        <!-- BASIC INFO -->
+        <div class="form-card">
+          <div class="card-header">
+            <mat-icon>person</mat-icon>
+            <h3>{{ 'CLIENTS.BASIC_INFO' | translate }}</h3>
+            <span class="required-badge">Required</span>
+          </div>
+
+          <div class="card-body two-columns">
+
+            <!-- FULL NAME -->
+            <div class="form-field">
+              <label for="fullName">
+                {{ 'CLIENTS.FULL_NAME' | translate }} <span class="required-star">*</span>
+              </label>
+              <input
+                id="fullName"
+                type="text"
+                formControlName="fullName"
+                class="form-input"
+                [class.error]="clientForm.get('fullName')?.invalid && clientForm.get('fullName')?.touched"
+                [placeholder]="'CLIENTS.FULL_NAME_PLACEHOLDER' | translate"
+                aria-label="Full name"
+              />
+              @if (clientForm.get('fullName')?.invalid && clientForm.get('fullName')?.touched) {
+                <div class="field-error">
+                  <mat-icon>error</mat-icon>
+                  {{ 'CLIENTS.FULL_NAME_REQUIRED' | translate }}
+                </div>
+              }
+            </div>
+
+            <!-- EMAIL -->
+            <div class="form-field">
+              <label for="email">
+                {{ 'CLIENTS.EMAIL' | translate }} <span class="required-star">*</span>
+              </label>
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                class="form-input"
+                [class.error]="clientForm.get('email')?.invalid && clientForm.get('email')?.touched"
+                [placeholder]="'CLIENTS.EMAIL_PLACEHOLDER' | translate"
+                aria-label="Email"
+              />
+              @if (clientForm.get('email')?.invalid && clientForm.get('email')?.touched) {
+                <div class="field-error">
+                  <mat-icon>error</mat-icon>
+                  @if (clientForm.get('email')?.hasError('required')) {
+                    {{ 'CLIENTS.EMAIL_REQUIRED' | translate }}
+                  } @else if (clientForm.get('email')?.hasError('email')) {
+                    {{ 'CLIENTS.VALID_EMAIL_REQUIRED' | translate }}
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- PHONE -->
+            <div class="form-field">
+              <label for="phone">
+                {{ 'CLIENTS.PHONE' | translate }} <span class="required-star">*</span>
+              </label>
+              <input
+                id="phone"
+                type="tel"
+                formControlName="phone"
+                class="form-input"
+                [class.error]="clientForm.get('phone')?.invalid && clientForm.get('phone')?.touched"
+                [placeholder]="'CLIENTS.PHONE_PLACEHOLDER' | translate"
+                aria-label="Phone"
+              />
+              @if (clientForm.get('phone')?.invalid && clientForm.get('phone')?.touched) {
+                <div class="field-error">
+                  <mat-icon>error</mat-icon>
+                  {{ 'CLIENTS.PHONE_REQUIRED' | translate }}
+                </div>
+              }
+            </div>
+
+            <!-- TAX ID -->
+            <div class="form-field">
+              <label for="taxId">{{ 'CLIENTS.TAX_ID' | translate }}</label>
+              <input
+                id="taxId"
+                type="text"
+                formControlName="taxId"
+                class="form-input"
+                [placeholder]="'CLIENTS.TAX_ID_PLACEHOLDER' | translate"
+                aria-label="Tax ID"
+              />
+              <div class="field-hint">{{ 'CLIENTS.TAX_ID_HINT' | translate }}</div>
+            </div>
+
+            <!-- VAT NUMBER -->
+            <div class="form-field">
+              <label for="vatNumber">{{ 'CLIENTS.VAT_NUMBER' | translate }}</label>
+              <input
+                id="vatNumber"
+                type="text"
+                formControlName="vatNumber"
+                class="form-input"
+                [class.error]="clientForm.get('vatNumber')?.invalid && clientForm.get('vatNumber')?.touched"
+                [placeholder]="'CLIENTS.VAT_NUMBER_PLACEHOLDER' | translate"
+                aria-label="VAT number"
+              />
+              @if (clientForm.get('vatNumber')?.invalid && clientForm.get('vatNumber')?.touched) {
+                <div class="field-error">
+                  <mat-icon>error</mat-icon>
+                  {{ 'CLIENTS.INVALID_VAT_FORMAT' | translate }}
+                </div>
+              }
+              <div class="field-hint">{{ 'CLIENTS.VAT_HINT' | translate }}</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- COMPANY DETAILS -->
+        <div class="form-card">
+          <div class="card-header">
+            <mat-icon>business</mat-icon>
+            <h3>{{ 'CLIENTS.COMPANY_DETAILS' | translate }}</h3>
+            <span class="required-badge">Required</span>
+          </div>
+
+          <div class="card-body two-columns">
+
+            <!-- COMPANY NAME -->
+            <div class="form-field col-span-full">
+              <label for="companyName">
+                {{ 'CLIENTS.COMPANY_NAME' | translate }} <span class="required-star">*</span>
+              </label>
+              <input
+                id="companyName"
+                type="text"
+                formControlName="companyName"
+                class="form-input"
+                [class.error]="clientForm.get('companyName')?.invalid && clientForm.get('companyName')?.touched"
+                [placeholder]="'CLIENTS.COMPANY_NAME_PLACEHOLDER' | translate"
+                aria-label="Company name"
+              />
+              @if (clientForm.get('companyName')?.invalid && clientForm.get('companyName')?.touched) {
+                <div class="field-error">
+                  <mat-icon>error</mat-icon>
+                  {{ 'CLIENTS.COMPANY_NAME_REQUIRED' | translate }}
+                </div>
+              }
+            </div>
+
+            <!-- STREET -->
+            <div class="form-field col-span-full">
+              <label for="street">
+                {{ 'CLIENTS.STREET_ADDRESS' | translate }} <span class="required-star">*</span>
+              </label>
+              <input
+                id="street"
+                type="text"
+                formControlName="street"
+                class="form-input"
+                [class.error]="clientForm.get('street')?.invalid && clientForm.get('street')?.touched"
+                [placeholder]="'CLIENTS.STREET_PLACEHOLDER' | translate"
+                aria-label="Street address"
+              />
+              @if (clientForm.get('street')?.invalid && clientForm.get('street')?.touched) {
+                <div class="field-error">
+                  <mat-icon>error</mat-icon>
+                  {{ 'CLIENTS.STREET_REQUIRED' | translate }}
+                </div>
+              }
+            </div>
+
+            <!-- CITY -->
+            <div class="form-field">
+              <label for="city">
+                {{ 'CLIENTS.CITY' | translate }} <span class="required-star">*</span>
+              </label>
+              <input
+                id="city"
+                type="text"
+                formControlName="city"
+                class="form-input"
+                [class.error]="clientForm.get('city')?.invalid && clientForm.get('city')?.touched"
+                [placeholder]="'CLIENTS.CITY_PLACEHOLDER' | translate"
+                aria-label="City"
+              />
+              @if (clientForm.get('city')?.invalid && clientForm.get('city')?.touched) {
+                <div class="field-error">
+                  <mat-icon>error</mat-icon>
+                  {{ 'CLIENTS.CITY_REQUIRED' | translate }}
+                </div>
+              }
+            </div>
+
+            <!-- POSTAL CODE -->
+            <div class="form-field">
+              <label for="postalCode">{{ 'CLIENTS.POSTAL_CODE' | translate }}</label>
+              <input
+                id="postalCode"
+                type="text"
+                formControlName="postalCode"
+                class="form-input"
+                [placeholder]="'CLIENTS.POSTAL_CODE_PLACEHOLDER' | translate"
+                aria-label="Postal code"
+              />
+            </div>
+
+            <!-- COUNTRY -->
+            <div class="form-field">
+              <label for="country">
+                {{ 'CLIENTS.COUNTRY' | translate }} <span class="required-star">*</span>
+              </label>
+              <select
+                id="country"
+                formControlName="country"
+                class="form-select"
+                [class.error]="clientForm.get('country')?.invalid && clientForm.get('country')?.touched"
+                aria-label="Country"
+              >
+                @for (c of countries; track c) {
+                  <option [value]="c">{{ c }}</option>
+                }
+              </select>
+              @if (clientForm.get('country')?.invalid && clientForm.get('country')?.touched) {
+                <div class="field-error">
+                  <mat-icon>error</mat-icon>
+                  {{ 'CLIENTS.COUNTRY_REQUIRED' | translate }}
+                </div>
+              }
+            </div>
+
+          </div>
+        </div>
+
+        <!-- PREVIEW CARD -->
+        <div class="preview-card">
+          <div class="preview-header">
+            <mat-icon>visibility</mat-icon>
+            <h3>Client Preview</h3>
+          </div>
+          <div class="preview-content">
+            <div class="preview-avatar">
+              <div class="avatar-preview" [style.backgroundColor]="'#0F4C81'">
+                {{ clientForm.get('fullName')?.value ? getInitialsPreview() : 'JD' }}
+              </div>
+            </div>
+            <div class="preview-details">
+              <div class="preview-name">{{ clientForm.get('fullName')?.value || 'Full Name' }}</div>
+              <div class="preview-email">{{ clientForm.get('email')?.value || 'email@example.com' }}</div>
+              <div class="preview-company">{{ clientForm.get('companyName')?.value || 'Company Name' }}</div>
+              <div class="preview-status">
+                <span class="status-badge active">Active</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <div class="mobile-actions">
+    <button class="cancel-btn" (click)="cancel()">
+      <mat-icon>close</mat-icon>
+      {{ 'COMMON.CANCEL' | translate }}
+    </button>
+
+    <button class="save-btn" [disabled]="isSaving" (click)="saveClient()">
+      @if (isSaving) {
+        <mat-icon class="spinner">autorenew</mat-icon>
+      } @else {
+        <mat-icon>save</mat-icon>
+      }
+      {{ 'COMMON.SAVE' | translate }}
+    </button>
+  </div>
+</div>

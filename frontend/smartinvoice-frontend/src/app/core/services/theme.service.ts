@@ -1,47 +1,40 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, signal, effect } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ThemeService {
-  private darkModeSubject = new BehaviorSubject<boolean>(false);
-  isDarkMode$ = this.darkModeSubject.asObservable();
+  private darkMode = signal<boolean>(false);
+  readonly isDarkMode = this.darkMode.asReadonly();
 
   constructor() {
     this.initTheme();
+    effect(() => {
+      const isDark = this.darkMode();
+      document.body.classList.toggle('dark-mode', isDark);
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
   }
 
   private initTheme() {
-    const savedTheme = localStorage.getItem('theme');
-    
-    if (savedTheme === 'dark') {
-      this.enableDarkMode();
-    } else if (savedTheme === 'light') {
-      this.disableDarkMode();
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark') {
+      this.darkMode.set(true);
+    } else if (saved === 'light') {
+      this.darkMode.set(false);
     } else {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      prefersDark ? this.enableDarkMode() : this.disableDarkMode();
+      this.darkMode.set(prefersDark);
     }
   }
 
-  toggleTheme() {
-    if (this.darkModeSubject.value) {
-      this.disableDarkMode();
-      localStorage.setItem('theme', 'light');
-    } else {
-      this.enableDarkMode();
-      localStorage.setItem('theme', 'dark');
-    }
+  toggleTheme(): void {
+    this.darkMode.update(dark => !dark);
   }
 
-  enableDarkMode() {
-    document.body.classList.add('dark-mode');
-    this.darkModeSubject.next(true);
+  enableDarkMode(): void {
+    this.darkMode.set(true);
   }
 
-  disableDarkMode() {
-    document.body.classList.remove('dark-mode');
-    this.darkModeSubject.next(false);
+  disableDarkMode(): void {
+    this.darkMode.set(false);
   }
 }
