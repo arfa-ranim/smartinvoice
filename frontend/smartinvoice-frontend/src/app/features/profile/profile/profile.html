@@ -1,0 +1,207 @@
+<div class="profile-container">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+    <app-top-bar
+      title="{{ 'PROFILE.TITLE' | translate }}"
+      [showMenuButton]="true"
+      [showBackButton]="true"
+      [showSearch]="false"
+      [showNotifications]="true"
+      [showAvatar]="true"
+      [showUserInfo]="false"
+      (onMenuClick)="toggleSidebar()"
+      (onBackClick)="goBack()"
+    ></app-top-bar>
+
+    <div class="profile-content">
+      <div class="profile-card">
+
+        <!-- Avatar -->
+        <div class="avatar-section">
+          <div class="avatar-preview" (click)="onAvatarClick()">
+            <img [src]="avatarPreview" alt="User avatar">
+            <div class="avatar-overlay">
+              <mat-icon>photo_camera</mat-icon>
+            </div>
+          </div>
+          <p class="avatar-hint">{{ 'PROFILE.AVATAR_HINT' | translate }}</p>
+        </div>
+
+        <!-- PROFILE FORM -->
+        <form [formGroup]="profileForm" class="form-section">
+          <h3>{{ 'PROFILE.PERSONAL_INFO' | translate }}</h3>
+
+          <div class="form-grid">
+            <!-- FULL NAME -->
+            <div class="form-field">
+              <label for="fullName">{{ 'PROFILE.FULL_NAME' | translate }}</label>
+              <input
+                id="fullName"
+                type="text"
+                formControlName="fullName"
+                [placeholder]="'PROFILE.FULL_NAME_PLACEHOLDER' | translate"
+              />
+              @if (profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched) {
+                <div class="error">{{ 'PROFILE.REQUIRED_ERROR' | translate }}</div>
+              }
+            </div>
+
+            <!-- EMAIL -->
+            <div class="form-field">
+              <label for="email">{{ 'PROFILE.EMAIL' | translate }}</label>
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                [placeholder]="'PROFILE.EMAIL_PLACEHOLDER' | translate"
+              />
+              @if (profileForm.get('email')?.invalid && profileForm.get('email')?.touched) {
+                <div class="error">{{ 'PROFILE.EMAIL_INVALID' | translate }}</div>
+              }
+            </div>
+
+            <!-- PHONE -->
+            <div class="form-field">
+              <label for="phone">{{ 'PROFILE.PHONE' | translate }}</label>
+              <input
+                id="phone"
+                type="tel"
+                formControlName="phone"
+                [placeholder]="'PROFILE.PHONE_PLACEHOLDER' | translate"
+              />
+            </div>
+          </div>
+
+          <!-- PREFERENCES -->
+          <h3>{{ 'PROFILE.PREFERENCES' | translate }}</h3>
+
+          <div class="preferences-grid">
+            <!-- LANGUAGE -->
+            <div class="preference-item">
+              <label for="language">{{ 'PROFILE.LANGUAGE' | translate }}</label>
+              <select id="language" formControlName="language">
+                @for (lang of languages; track lang.value) {
+                  <option [value]="lang.value">{{ lang.label }}</option>
+                }
+              </select>
+            </div>
+
+            <!-- DATE FORMAT -->
+            <div class="preference-item">
+              <label for="dateFormat">{{ 'PROFILE.DATE_FORMAT' | translate }}</label>
+              <select id="dateFormat" formControlName="dateFormat">
+                @for (format of dateFormats; track format.value) {
+                  <option [value]="format.value">{{ format.label }}</option>
+                }
+              </select>
+            </div>
+
+            <!-- CURRENCY -->
+            <div class="preference-item">
+              <label for="currency">{{ 'PROFILE.CURRENCY' | translate }}</label>
+              <select id="currency" formControlName="currency">
+                @for (curr of currencies; track curr.value) {
+                  <option [value]="curr.value">{{ curr.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- STRIPE -->
+          <h3>{{ 'PROFILE.PAYMENT_INTEGRATION' | translate }}</h3>
+
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="stripe">{{ 'PROFILE.STRIPE_ACCOUNT_ID' | translate }}</label>
+              <input
+                id="stripe"
+                type="text"
+                formControlName="stripeAccountId"
+                [placeholder]="'PROFILE.STRIPE_ACCOUNT_PLACEHOLDER' | translate"
+              />
+              <p class="field-hint">{{ 'PROFILE.STRIPE_HINT' | translate }}</p>
+            </div>
+          </div>
+        </form>
+
+        <!-- PASSWORD -->
+        <form [formGroup]="passwordForm" class="form-section">
+          <h3>{{ 'PROFILE.SECURITY' | translate }}</h3>
+
+          <div class="form-grid">
+            <!-- CURRENT -->
+            <div class="form-field">
+              <label for="currentPassword">{{ 'PROFILE.CURRENT_PASSWORD' | translate }}</label>
+              <input
+                id="currentPassword"
+                type="password"
+                formControlName="currentPassword"
+                [placeholder]="'PROFILE.CURRENT_PASSWORD_PLACEHOLDER' | translate"
+                autocomplete="current-password"
+              />
+            </div>
+
+            <!-- NEW -->
+            <div class="form-field">
+              <label for="newPassword">{{ 'PROFILE.NEW_PASSWORD' | translate }}</label>
+              <input
+                id="newPassword"
+                type="password"
+                formControlName="newPassword"
+                [placeholder]="'PROFILE.NEW_PASSWORD_PLACEHOLDER' | translate"
+                autocomplete="new-password"
+              />
+
+              @if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.hasError('weak')) {
+                <div class="error">{{ 'PROFILE.PASSWORD_WEAK' | translate }}</div>
+              }
+
+              @if (passwordForm.get('newPassword')?.value) {
+                <div class="password-strength">
+                  <div class="strength-bar"
+                       [style.width.%]="getPasswordStrength().width"
+                       [style.background]="getPasswordStrength().color"></div>
+                  <span class="strength-label">{{ getPasswordStrength().label }}</span>
+                </div>
+              }
+            </div>
+
+            <!-- CONFIRM -->
+            <div class="form-field">
+              <label for="confirmPassword">{{ 'PROFILE.CONFIRM_PASSWORD' | translate }}</label>
+              <input
+                id="confirmPassword"
+                type="password"
+                formControlName="confirmPassword"
+                [placeholder]="'PROFILE.CONFIRM_PASSWORD_PLACEHOLDER' | translate"
+                autocomplete="new-password"
+              />
+            </div>
+          </div>
+
+          @if (passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched) {
+            <div class="error">{{ 'PROFILE.PASSWORD_MISMATCH' | translate }}</div>
+          }
+
+          <div class="form-actions inline">
+            <button type="button" class="btn-secondary" (click)="changePassword()">
+              {{ 'PROFILE.CHANGE_PASSWORD' | translate }}
+            </button>
+          </div>
+        </form>
+
+        <!-- ACTIONS -->
+        <div class="action-buttons">
+          <button class="cancel-btn" (click)="cancel()">
+            {{ 'PROFILE.CANCEL' | translate }}
+          </button>
+          <button class="save-btn" (click)="saveProfile()">
+            {{ 'PROFILE.SAVE_CHANGES' | translate }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>

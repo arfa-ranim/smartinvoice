@@ -1,0 +1,92 @@
+<!-- Logo Header with Theme Toggle -->
+<header class="landing-header">
+  <div class="logo" routerLink="/">
+    <div class="logo-icon">
+      <mat-icon>receipt_long</mat-icon>
+    </div>
+    <span class="logo-text">SmartInvoice</span>
+  </div>
+  <div class="header-actions">
+    <button class="theme-toggle" (click)="toggleTheme()" [attr.aria-label]="'LANDING.TOGGLE_THEME' | translate">
+      <mat-icon>{{ isDarkMode ? 'dark_mode' : 'light_mode' }}</mat-icon>
+    </button>
+  </div>
+</header>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="hero-container">
+    <div class="hero-content fade-in-up">
+      <div class="badge">{{ 'LANDING.NEW_BADGE' | translate }}</div>
+      <h1>{{ 'LANDING.HERO_TITLE_PART1' | translate }} <span class="highlight">{{ 'LANDING.HERO_TITLE_PART2' | translate }}</span></h1>
+      <p>{{ 'LANDING.HERO_DESCRIPTION' | translate }}</p>
+
+      <div class="hero-cta">
+        <a routerLink="/auth/sign-up" class="btn-accent-gold">
+          {{ 'LANDING.GET_STARTED' | translate }}
+          <span class="badge-free">{{ 'LANDING.NO_CREDIT_CARD' | translate }}</span>
+        </a>
+        <button class="btn-accent-green" (click)="scrollToFeatures()">{{ 'LANDING.LEARN_MORE' | translate }}</button>
+      </div>
+
+      <div class="trust-bar">
+        <div class="avatars">
+          <img src="https://ui-avatars.com/api/?name=A&background=0D8ABC&color=fff" width="32" height="32" alt="User avatar A">
+          <img 
+            Src="https://ui-avatars.com/api/?name=B&background=34D399&color=fff"
+            width="32"
+            height="32"
+            alt="User avatar B">
+          <img 
+            Src="https://ui-avatars.com/api/?name=C&background=F59E0B&color=fff"
+            width="32"
+            height="32"
+            alt="User avatar C">
+        </div>
+        <p>{{ 'LANDING.TRUSTED_BY' | translate }}</p>
+      </div>
+    </div>
+
+    <div class="hero-visual fade-in-up fade-in-delay-1">
+      <div class="mockup">
+        <img 
+           [src]="imageSrc"
+          [alt]="'LANDING.DASHBOARD_ALT' | translate"
+          width="600"
+           alt=""
+          height="338"
+          priority
+          loading="eager">
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Features -->
+<section class="features fade-in-scroll">
+  <div class="section-header">
+    <span class="tag">{{ 'LANDING.KEY_FEATURES' | translate }}</span>
+    <h2>{{ 'LANDING.FEATURES_TITLE' | translate }}</h2>
+  </div>
+
+  <div class="features-grid">
+    @for (feature of features; track feature.titleKey) {
+      <div class="feature-card fade-in-scroll-item">
+        <div class="icon-wrapper" [class]="feature.color">
+          <mat-icon>{{ feature.icon }}</mat-icon>
+        </div>
+        <h3>{{ feature.titleKey | translate }}</h3>
+        <p>{{ feature.descriptionKey | translate }}</p>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta fade-in-scroll">
+  <div class="cta-card">
+    <h2>{{ 'LANDING.CTA_TITLE' | translate }}</h2>
+    <p>{{ 'LANDING.CTA_DESCRIPTION' | translate }}</p>
+    <a routerLink="/auth/sign-up" class="btn-cta">{{ 'LANDING.GET_STARTED_NOW' | translate }}</a>
+  </div>
+</section>

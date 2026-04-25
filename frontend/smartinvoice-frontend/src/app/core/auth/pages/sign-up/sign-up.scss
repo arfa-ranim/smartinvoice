@@ -1,0 +1,502 @@
+.signup-wrapper {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding: 2rem 1rem;
+
+  @media (min-width: 992px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+/* ================= LEFT ================= */
+.benefits-section {
+  flex: 1;
+  order: 1;
+  animation: fadeInLeft 0.6s ease;
+
+  .intro {
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.2;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: translateX(5px);
+      }
+
+      .highlight {
+        color: var(--primary);
+        transition: color 0.3s ease;
+      }
+    }
+
+    p {
+      margin-top: 1rem;
+      color: #6b7280;
+      max-width: 500px;
+      transition: color 0.3s ease;
+    }
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.benefits-grid {
+  display: grid;
+  gap: 1rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.benefit-card {
+  background: var(--card-light);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border-light);
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  .icon {
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+    transition: all 0.3s ease;
+  }
+
+  h3 {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: #6b7280;
+    line-height: 1.4;
+    transition: color 0.3s ease;
+  }
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary);
+    
+    .icon {
+      transform: scale(1.1);
+      color: var(--primary);
+    }
+    
+    h3 {
+      color: var(--primary);
+    }
+  }
+}
+
+body.dark-mode .benefit-card {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+
+  .icon {
+    color: var(--accent-gold);
+  }
+
+  h3 {
+    color: white;
+  }
+
+  p {
+    color: #94a3b8;
+  }
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    border-color: var(--accent-gold);
+    background: rgba(30, 41, 59, 0.8);
+    
+    .icon {
+      transform: scale(1.1);
+      color: var(--accent-gold);
+    }
+    
+    h3 {
+      color: var(--accent-gold);
+    }
+    
+    p {
+      color: #cbd5e1;
+    }
+  }
+}
+
+/* ================= RIGHT ================= */
+.form-section {
+  width: 100%;
+  max-width: 480px;
+  order: 2;
+  animation: fadeInRight 0.6s ease;
+
+  @media (min-width: 992px) {
+    order: 2;
+  }
+}
+
+.signup-card {
+  border-radius: 1.5rem !important;
+  padding: 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12) !important;
+  }
+}
+
+body.dark-mode .signup-card {
+  background: var(--surface-dark) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6) !important;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8) !important;
+  }
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+
+  h2 {
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    font-size: 1.8rem;
+    transition: color 0.3s ease;
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: #6b7280;
+    transition: color 0.3s ease;
+  }
+}
+
+/* SOCIAL BUTTONS */
+.social-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  .social-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    padding: 0.75rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-light);
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      transition: transform 0.2s ease;
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      
+      mat-icon {
+        transform: scale(1.1);
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+body.dark-mode .social-buttons .social-btn {
+  border-color: #334155;
+  color: #e2e8f0;
+
+  mat-icon {
+    color: #94a3b8;
+    transition: all 0.2s ease;
+  }
+
+  &:hover {
+    background: #1e293b;
+    border-color: var(--accent-gold);
+    
+    mat-icon {
+      color: var(--accent-gold);
+      transform: scale(1.1);
+    }
+  }
+}
+
+/* DIVIDER */
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 1.5rem 0;
+
+  span {
+    background: var(--card-light);
+    padding: 0 10px;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    position: relative;
+    z-index: 1;
+    transition: color 0.3s ease;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border-light);
+    z-index: 0;
+  }
+}
+
+body.dark-mode .divider {
+  span {
+    background: var(--surface-dark);
+    color: #64748b;
+  }
+
+  &::before {
+    background: #334155;
+  }
+}
+
+/* FORM */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  mat-form-field {
+    width: 100%;
+    transition: transform 0.2s ease;
+
+    &:focus-within {
+      transform: translateY(-2px);
+    }
+  }
+}
+
+/* TERMS */
+.terms {
+  font-size: 0.75rem;
+  margin: 0.5rem 0;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateX(2px);
+  }
+
+  a {
+    color: var(--primary);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+
+    &:hover {
+      text-decoration: underline;
+      color: var(--accent-gold);
+    }
+  }
+}
+
+body.dark-mode .terms {
+  color: #94a3b8;
+
+  a {
+    color: var(--accent-gold);
+    
+    &:hover {
+      color: var(--accent-gold);
+      text-shadow: 0 0 8px rgba(255, 193, 7, 0.3);
+    }
+  }
+}
+
+/* BUTTON */
+.submit-btn {
+  background: var(--accent-gold) !important;
+  color: #111 !important;
+  border-radius: 0.75rem !important;
+  padding: 1rem !important;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  transition: all 0.3s ease;
+
+  .btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  mat-spinner {
+    margin: auto;
+  }
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+body.dark-mode .submit-btn {
+  background: var(--accent-gold) !important;
+  color: #111 !important;
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 0 25px rgba(255, 193, 7, 0.5);
+  }
+}
+
+/* SIGNIN LINK */
+.signin-link {
+  text-align: center;
+  font-size: 0.85rem;
+  margin-top: 1.5rem;
+
+  a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+
+    &:hover {
+      text-decoration: underline;
+      transform: translateX(2px);
+      display: inline-block;
+    }
+  }
+}
+
+body.dark-mode .signin-link {
+  color: #94a3b8;
+
+  a {
+    color: var(--accent-gold);
+    
+    &:hover {
+      color: var(--accent-gold);
+      text-shadow: 0 0 8px rgba(255, 193, 7, 0.3);
+    }
+  }
+}
+
+/* MOBILE ORDER */
+@media (max-width: 991px) {
+  .benefits-section {
+    order: 1;
+    animation: fadeInUp 0.6s ease;
+  }
+
+  .form-section {
+    order: 2;
+    animation: fadeInUp 0.6s ease 0.2s both;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .signup-card {
+    padding: 1.5rem;
+  }
+
+  .benefits-section .intro h1 {
+    font-size: 2rem;
+  }
+
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* Password strength indicator */
+.password-strength {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  .strength-bar {
+    height: 4px;
+    border-radius: 2px;
+    transition: width 0.2s;
+  }
+  .strength-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+}

@@ -1,0 +1,107 @@
+<div class="auth-container">
+  <mat-card class="auth-card mat-elevation-z0">
+    <div class="hero-header">
+      <div class="logo-circle">
+        <mat-icon class="large-icon">person</mat-icon>
+      </div>
+    </div>
+
+    <mat-card-content>
+      <h2 class="title">{{ 'AUTH.WELCOME_BACK' | translate }}</h2>
+      <p class="subtitle">{{ 'AUTH.SIGN_IN_SUBTITLE' | translate }}</p>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'AUTH.EMAIL' | translate }}</mat-label>
+          <mat-icon matPrefix>mail_outline</mat-icon>
+          <input 
+            matInput 
+            id="email"
+            formControlName="email" 
+            type="email" 
+            [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate"
+            aria-label="Email"
+            required 
+          />
+        </mat-form-field>
+
+        <!-- ✅ Error messages show when field is touched AND invalid -->
+        <div aria-live="polite">
+          @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
+            <p class="error-msg">{{ 'AUTH.EMAIL_REQUIRED' | translate }}</p>
+          }
+          @if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
+            <p class="error-msg">{{ 'AUTH.VALID_EMAIL' | translate }}</p>
+          }
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'AUTH.PASSWORD' | translate }}</mat-label>
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <input
+            matInput
+            id="password"
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            [placeholder]="'AUTH.PASSWORD_PLACEHOLDER' | translate"
+            aria-label="Password"
+            autocomplete="current-password"
+            required
+          />
+          <button mat-icon-button matSuffix type="button" (click)="togglePassword()" aria-label="Toggle password visibility">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <div aria-live="polite">
+          @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
+            <p class="error-msg">{{ 'AUTH.PASSWORD_REQUIRED' | translate }}</p>
+          }
+          @if (form.get('password')?.hasError('minlength') && form.get('password')?.touched) {
+            <p class="error-msg">{{ 'AUTH.PASSWORD_MIN_LENGTH' | translate }}</p>
+          }
+          @if (form.get('password')?.hasError('noSpaces') && form.get('password')?.touched) {
+            <p class="error-msg">{{ 'AUTH.PASSWORD_NO_SPACES' | translate }}</p>
+          }
+        </div>
+
+        <div class="options-row">
+          <mat-checkbox formControlName="rememberMe">{{ 'AUTH.REMEMBER_ME' | translate }}</mat-checkbox>
+          <a class="forgot-link" routerLink="/auth/forgot-password">{{ 'AUTH.FORGOT_PASSWORD' | translate }}</a>
+        </div>
+
+        <!-- ✅ Button enabled always, but validation blocks submission -->
+        <button mat-raised-button class="submit-btn" type="submit" [disabled]="loading">
+          @if (!loading) {
+            <span class="btn-content">
+              <span>{{ 'AUTH.SIGN_IN' | translate }}</span>
+              <mat-icon>login</mat-icon>
+            </span>
+          } @else {
+            <mat-spinner diameter="24"></mat-spinner>
+          }
+        </button>
+      </form>
+
+      <div class="divider"><span>{{ 'AUTH.OR_CONTINUE_WITH' | translate }}</span></div>
+
+      <div class="social-row">
+        <button mat-stroked-button class="social-btn" type="button">
+          <mat-icon>public</mat-icon> Google
+        </button>
+        <button mat-stroked-button class="social-btn" type="button">
+          <mat-icon>business</mat-icon> SSO
+        </button>
+      </div>
+
+      <p class="signup-link">
+        {{ 'AUTH.NO_ACCOUNT' | translate }} <a routerLink="/auth/sign-up">{{ 'AUTH.CREATE_ACCOUNT' | translate }}</a>
+      </p>
+    </mat-card-content>
+  </mat-card>
+
+  <footer class="auth-footer">
+    © 2025 SmartInvoice Systems Inc. {{ 'AUTH.ALL_RIGHTS_RESERVED' | translate }}<br>
+    {{ 'AUTH.PRIVACY_POLICY' | translate }} | {{ 'AUTH.TERMS_OF_SERVICE' | translate }} | {{ 'AUTH.HELP_CENTER' | translate }}
+  </footer>
+</div>

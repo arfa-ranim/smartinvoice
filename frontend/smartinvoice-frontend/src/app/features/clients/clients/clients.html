@@ -1,0 +1,266 @@
+<div class="clients-container">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+    <app-top-bar
+      title="{{ 'CLIENTS.TITLE' | translate }}"
+      [showMenuButton]="true"
+      [showSearch]="false"
+      [showNotifications]="true"
+      [showAvatar]="true"
+      [showUserInfo]="false"
+      (onMenuClick)="toggleSidebar()"
+    ></app-top-bar>
+
+    <div class="clients-content">
+      <div class="page-header">
+        <div>
+          <h2>{{ 'CLIENTS.PAGE_TITLE' | translate }}</h2>
+          <p>{{ 'CLIENTS.SUBTITLE' | translate:{ count: (totalClients$ | async) } }}</p>
+        </div>
+
+        <button
+          class="new-client-btn"
+          (click)="addClient()"
+          aria-label="Add new client"
+        >
+          <mat-icon aria-hidden="true">person_add</mat-icon>
+          {{ 'CLIENTS.NEW_CLIENT' | translate }}
+        </button>
+      </div>
+
+      <div class="filters-card">
+        <div class="search-field">
+          <mat-icon aria-hidden="true">search</mat-icon>
+          <label for="clientSearch" class="visually-hidden">Search clients</label>
+          <input
+            id="clientSearch"
+            type="text"
+            [(ngModel)]="searchQuery"
+            (input)="onSearch()"
+            [placeholder]="'CLIENTS.SEARCH_PLACEHOLDER' | translate"
+            aria-label="Search clients"
+          >
+        </div>
+
+        <div class="filter-buttons" role="group" aria-label="Client status filters">
+          <button 
+            class="filter-btn" 
+            [class.active]="selectedFilter === 'all'" 
+            (click)="setFilter('all')"
+            [attr.aria-pressed]="selectedFilter === 'all'"
+            aria-label="Show all clients"
+          >
+            {{ 'CLIENTS.FILTER_ALL' | translate }}
+          </button>
+
+          <button 
+            class="filter-btn" 
+            [class.active]="selectedFilter === 'active'" 
+            (click)="setFilter('active')"
+            [attr.aria-pressed]="selectedFilter === 'active'"
+            aria-label="Show active clients"
+          >
+            {{ 'CLIENTS.FILTER_ACTIVE' | translate }}
+          </button>
+
+          <button 
+            class="filter-btn" 
+            [class.active]="selectedFilter === 'pending'" 
+            (click)="setFilter('pending')"
+            [attr.aria-pressed]="selectedFilter === 'pending'"
+            aria-label="Show pending clients"
+          >
+            {{ 'CLIENTS.FILTER_PENDING' | translate }}
+          </button>
+
+          <button 
+            class="filter-btn" 
+            [class.active]="selectedFilter === 'overdue'" 
+            (click)="setFilter('overdue')"
+            [attr.aria-pressed]="selectedFilter === 'overdue'"
+            aria-label="Show overdue clients"
+          >
+            {{ 'CLIENTS.FILTER_OVERDUE' | translate }}
+          </button>
+
+          <div class="divider" aria-hidden="true"></div>
+
+          <button 
+            class="filter-btn" 
+            (click)="openMoreFilters()" 
+            aria-label="More filters"
+          >
+            <mat-icon aria-hidden="true">filter_list</mat-icon>
+            {{ 'CLIENTS.MORE_FILTERS' | translate }}
+          </button>
+
+          @if ((hasActiveFilters$ | async)) {
+            <button 
+              class="filter-btn clear-filters" 
+              (click)="clearFilters()" 
+              aria-label="Clear all filters"
+            >
+              <mat-icon aria-hidden="true">close</mat-icon>
+              {{ 'CLIENTS.CLEAR_FILTERS' | translate }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-responsive">
+          <table class="clients-table" role="grid" aria-label="Clients list">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'CLIENTS.COLUMN_NAME' | translate }}</th>
+                <th scope="col">{{ 'CLIENTS.COLUMN_COMPANY' | translate }}</th>
+                <th scope="col">{{ 'CLIENTS.COLUMN_STATUS' | translate }}</th>
+                <th scope="col" class="text-right">{{ 'CLIENTS.COLUMN_OUTSTANDING' | translate }}</th>
+                <th scope="col" class="text-right">{{ 'CLIENTS.COLUMN_INVOICES' | translate }}</th>
+                <th scope="col"><span class="visually-hidden">Actions</span></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (client of (paginatedClients$ | async); track client.id) {
+                <tr>
+                  <td>
+                    <div class="client-info">
+                      <div class="avatar-initials" [style.background-color]="client.color" aria-hidden="true">
+                        {{ client.initials }}
+                      </div>
+                      <div>
+                        <p class="client-name">{{ client.name }}</p>
+                        <p class="client-email">{{ client.email }}</p>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td class="company-name">{{ client.company }}</td>
+
+                  <td>
+                    <span class="status-badge" [class]="client.status" [attr.aria-label]="'Status: ' + client.status">
+                      {{ ('CLIENTS.STATUS_' + client.status.toUpperCase()) | translate }}
+                    </span>
+                  </td>
+
+                  <td class="text-right outstanding" [class.overdue]="client.status === 'overdue'">
+                    {{ client.outstanding | appCurrency }}
+                  </td>
+
+                  <td class="text-right">
+                    <span class="invoice-badge" [attr.aria-label]="'Invoice count: ' + (client.invoiceCount || 0)">
+                      {{ client.invoiceCount || 0 }}
+                    </span>
+                  </td>
+
+                  <td class="text-right">
+                    <button
+                      class="more-btn"
+                      [matMenuTriggerFor]="menu"
+                      [attr.aria-label]="'Actions for ' + client.name"
+                      aria-label="More options"
+                    >
+                      <mat-icon aria-hidden="true">more_vert</mat-icon>
+                    </button>
+
+                    <mat-menu #menu="matMenu">
+                      <button mat-menu-item (click)="editClient(client)" aria-label="Edit client">
+                        {{ 'COMMON.EDIT' | translate }}
+                      </button>
+                      <button mat-menu-item (click)="deleteClient(client)" aria-label="Delete client">
+                        {{ 'COMMON.DELETE' | translate }}
+                      </button>
+                      <button mat-menu-item (click)="viewInvoices(client)" aria-label="View client invoices">
+                        {{ 'CLIENTS.VIEW_INVOICES' | translate }}
+                      </button>
+                    </mat-menu>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="text-center empty-state">
+                    <mat-icon aria-hidden="true">people_outline</mat-icon>
+                    <p>{{ 'CLIENTS.NO_CLIENTS' | translate }}</p>
+                    <button class="add-first-btn" (click)="addClient()" aria-label="Add first client">
+                      {{ 'CLIENTS.ADD_FIRST' | translate }}
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination" role="navigation" aria-label="Pagination">
+          <div class="showing-info">
+            {{ 'CLIENTS.SHOWING' | translate:{ 
+              start: ((startIndex$ | async) || 0) + 1, 
+              end: (endIndex$ | async) || 0, 
+              total: (totalClients$ | async) || 0 
+            } }}
+
+            <label for="pageSizeSelect" class="visually-hidden">Items per page</label>
+            <select
+              id="pageSizeSelect"
+              class="page-size-select"
+              (change)="onPageSizeChange($event)"
+              aria-label="Items per page"
+            >
+              @for (size of pageSizeOptions; track size) {
+                <option [value]="size" [selected]="size === itemsPerPage">
+                  {{ size }} {{ 'COMMON.PER_PAGE' | translate }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="pagination-controls">
+            <button 
+              class="page-btn" 
+              [disabled]="currentPage === 1" 
+              (click)="previousPage()"
+              aria-label="Previous page"
+            >
+              <mat-icon aria-hidden="true">chevron_left</mat-icon>
+            </button>
+
+            @for (page of (pages$ | async); track page) {
+              <button 
+                class="page-number" 
+                [class.active]="page === currentPage" 
+                (click)="goToPage(page)"
+                [attr.aria-label]="'Go to page ' + page"
+                [attr.aria-current]="page === currentPage ? 'page' : null"
+              >
+                {{ page }}
+              </button>
+            }
+
+            <button 
+              class="page-btn" 
+              [disabled]="currentPage === (totalPages$ | async)" 
+              (click)="nextPage()"
+              aria-label="Next page"
+            >
+              <mat-icon aria-hidden="true">chevron_right</mat-icon>
+            </button>
+
+            <button
+              class="export-btn"
+              (click)="exportToCSV()"
+              [matTooltip]="'CLIENTS.EXPORT_TOOLTIP' | translate"
+              aria-label="Export clients to CSV"
+            >
+              <mat-icon aria-hidden="true">file_download</mat-icon>
+              {{ 'COMMON.EXPORT' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <app-bottom-nav></app-bottom-nav>
+</div>

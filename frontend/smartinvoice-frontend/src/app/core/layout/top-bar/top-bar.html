@@ -1,0 +1,82 @@
+<header class="top-bar">
+  <div class="top-bar-left">
+    @if (showMenuButton) {
+      <button class="menu-btn" (click)="onMenuClick.emit()" [attr.aria-label]="'TOPBAR.MENU' | translate"
+  aria-label="Open menu">
+        <mat-icon aria-hidden="true">menu</mat-icon>
+      </button>
+    }
+
+    @if (showBackButton) {
+      <button class="back-btn" (click)="onBackClick.emit()" [attr.aria-label]="'TOPBAR.GO_BACK' | translate"
+       aria-label="Go back">
+        <mat-icon aria-hidden="true">arrow_back</mat-icon>
+      </button>
+    }
+
+    <ng-content select="[left-content]"></ng-content>
+    @if (title && !hasLeftContent) {
+      <h1 class="page-title">{{ title | translate }}</h1>
+    }
+  </div>
+
+  @if (showSearch) {
+    <div class="top-bar-center">
+      <div class="search-container">
+        <label for="search-input" class="visually-hidden">{{ searchPlaceholder | translate }}</label>
+        <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
+        <input 
+          id="search-input"
+          type="text" 
+          [placeholder]="searchPlaceholder | translate" 
+          [ngModel]="searchQuery"
+          (ngModelChange)="onSearchChange.emit($event)"
+          class="search-input"
+          [attr.aria-label]="'TOPBAR.SEARCH' | translate"
+          [attr.title]="searchPlaceholder | translate"
+        />
+      </div>
+    </div>
+  }
+
+  <div class="top-bar-right">
+    <ng-content select="[right-actions]"></ng-content>
+
+    @if (showNotifications) {
+      <button class="icon-btn" mat-icon-button [attr.aria-label]="'TOPBAR.NOTIFICATIONS' | translate"   aria-label="Notifications"
+        title="Notifications">
+        <mat-icon aria-hidden="true">notifications</mat-icon>
+        <span class="notification-badge" aria-hidden="true"></span>
+      </button>
+    }
+
+    @if (showAvatar) {
+      <div class="user-menu" (click)="toggleUserMenu()" #userMenuTrigger [attr.aria-label]="'User menu'">
+        <div class="avatar">
+          <img [src]="avatarUrl" [alt]="'TOPBAR.USER_AVATAR' | translate" [title]="'TOPBAR.USER_AVATAR' | translate" alt="">
+        </div>
+        @if (showUserInfo) {
+          <div class="user-info">
+            <p class="user-name">{{ userName }}</p>
+            <p class="user-role">{{ userRole }}</p>
+          </div>
+        }
+        <mat-icon class="dropdown-icon" aria-hidden="true">expand_more</mat-icon>
+      </div>
+      @if (userMenuOpen) {
+        <div class="user-dropdown" (clickOutside)="closeUserMenu()" role="menu" aria-label="User menu options">
+          <a routerLink="/profile" (click)="closeUserMenu()" role="menuitem">{{ 'TOPBAR.PROFILE' | translate }}</a>
+          <a routerLink="/settings" (click)="closeUserMenu()" role="menuitem">{{ 'TOPBAR.SETTINGS' | translate }}</a>
+          <button (click)="toggleTheme(); closeUserMenu()" role="menuitem">
+            <mat-icon aria-hidden="true">{{ isDarkMode ? 'dark_mode' : 'light_mode' }}</mat-icon>
+            {{ isDarkMode ? ('TOPBAR.LIGHT_MODE' | translate) : ('TOPBAR.DARK_MODE' | translate) }}
+          </button>
+          <a href="#" (click)="openHelp(); $event.preventDefault(); closeUserMenu()" role="menuitem">{{ 'TOPBAR.HELP' | translate }}</a>
+          <hr>
+          <button (click)="logout(); closeUserMenu()" role="menuitem">{{ 'TOPBAR.LOGOUT' | translate }}</button>
+        </div>
+      }
+    }
+  </div>
+</header>
+

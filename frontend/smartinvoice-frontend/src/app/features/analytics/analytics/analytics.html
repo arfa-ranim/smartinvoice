@@ -1,0 +1,315 @@
+<div class="analytics-container">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content">
+    <app-top-bar
+      title="Analytics"
+      [showMenuButton]="true"
+      [showSearch]="false"
+      [showNotifications]="true"
+      [showAvatar]="true"
+      [showUserInfo]="false"
+      (onMenuClick)="toggleSidebar()"
+    ></app-top-bar>
+
+    <div class="analytics-content">
+      <!-- Tabs Navigation -->
+      <nav class="tabs-nav">
+        <a class="tab" [class.active]="selectedTab === 'exec'" (click)="setTab('exec')">Executive Overview</a>
+        <a class="tab" [class.active]="selectedTab === 'revenue'" (click)="setTab('revenue')">Revenue Streams</a>
+        <a class="tab" [class.active]="selectedTab === 'billing'" (click)="setTab('billing')">Billing Cycles</a>
+        <a class="tab" [class.active]="selectedTab === 'retention'" (click)="setTab('retention')">Client Retention</a>
+        <a class="tab" [class.active]="selectedTab === 'forecast'" (click)="setTab('forecast')">Forecasts</a>
+      </nav>
+
+      <!-- Executive Overview Tab -->
+      @if (selectedTab === 'exec') {
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="card-header">
+              <span class="card-label">Total Revenue</span>
+              <mat-icon class="primary-icon">payments</mat-icon>
+            </div>
+            <div class="kpi-value">{{ revenueTrends.reduce((sum, t) => sum + t.revenue, 0) | appCurrency }}</div>
+            <div class="trend positive"><mat-icon>trending_up</mat-icon><span>+8.2% vs last month</span></div>
+          </div>
+          <div class="kpi-card">
+            <div class="card-header">
+              <span class="card-label">Avg. Deal Value</span>
+              <mat-icon class="gold-icon">handshake</mat-icon>
+            </div>
+            <div class="kpi-value">{{ (revenueTrends.reduce((sum, t) => sum + t.revenue, 0) / (revenueTrends.length || 1)) | currency:'USD':'symbol':'1.0-0' }}</div>
+            <div class="trend positive"><mat-icon>trending_up</mat-icon><span>+3.1% YoY</span></div>
+          </div>
+          <div class="kpi-card">
+            <div class="card-header">
+              <span class="card-label">Growth Rate</span>
+              <mat-icon class="primary-icon">monitoring</mat-icon>
+            </div>
+            <div class="kpi-value">+{{ forecast.trend === 'up' ? forecast.forecast.toFixed(0) : '12.5' }}%</div>
+            <div class="trend positive"><mat-icon>trending_up</mat-icon><span>Outperforming target</span></div>
+          </div>
+          <div class="kpi-card">
+            <div class="card-header">
+              <span class="card-label">Outstanding</span>
+              <mat-icon class="neutral-icon">pending_actions</mat-icon>
+            </div>
+            <div class="kpi-value">$54,210.00</div>
+            <div class="trend negative"><mat-icon>warning</mat-icon><span>12 Overdue Invoices</span></div>
+          </div>
+        </div>
+
+        <!-- Chart with Chart.js -->
+
+<div class="two-columns">
+  <div class="chart-card">
+    <div class="chart-header">
+      <div>
+        <h3>Revenue Growth Over Time</h3>
+        <p>Monthly breakdown of revenue</p>
+      </div>
+      <div class="period-controls">
+        <button class="range-btn" (click)="toggleCustomRange()">
+          {{ customRangeMode ? 'Last 6 Months' : 'Custom Range' }}
+        </button>
+        @if (customRangeMode) {
+      <div class="date-range">
+      <mat-form-field appearance="outline" class="date-field">
+        <mat-label>From</mat-label>
+        <input
+          matInput
+          [matDatepicker]="pickerFrom"
+          [(ngModel)]="dateRangeStart"
+          (dateChange)="onDateRangeChange()"
+          aria-label="Start date"
+          title="Select start date"
+        >
+        <mat-datepicker #pickerFrom></mat-datepicker>
+        <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="date-field">
+        <mat-label>To</mat-label>
+        <input
+          matInput
+          [matDatepicker]="pickerTo"
+          [(ngModel)]="dateRangeEnd"
+          (dateChange)="onDateRangeChange()"
+          aria-label="End date"
+          title="Select end date"
+        >
+        <mat-datepicker #pickerTo></mat-datepicker>
+        <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+      </mat-form-field>
+    </div>
+        }
+      </div>
+    </div>
+    <div class="revenue-chart-container">
+      <canvas #revenueChart height="250" 
+              aria-label="Revenue chart showing monthly revenue trends"
+              role="img"
+              title="Revenue chart"></canvas>
+    </div>
+  </div>
+
+  <!-- Billing vs Payments Card -->
+  <div class="billing-card">
+    <h3>Billing vs. Payments</h3>
+    <p>Efficiency of collection cycles</p>
+    <div class="performance-header">
+      <span>Current Month Performance</span>
+      <span>92% Collected</span>
+    </div>
+    <div class="progress-bar">
+      <div class="paid-segment"></div>
+      <div class="pending-segment"></div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><span class="dot primary-dot"></span><span>Paid</span></div>
+      <div class="legend-item"><span class="dot gold-dot"></span><span>Pending</span></div>
+    </div>
+  </div>
+</div>
+
+        <!-- AI Forecast Widget -->
+        <div class="forecast-widget">
+          <div class="forecast-header">
+            <mat-icon>auto_awesome</mat-icon>
+            <h3>AI Next Month Forecast</h3>
+          </div>
+          <div class="forecast-content">
+            <div class="forecast-value">
+              <span class="label">Projected Revenue</span>
+              <span class="value">{{ forecast.forecast | currency:'USD':'symbol':'1.0-0' }}</span>
+              <span class="trend" [class]="forecast.trend">
+                <mat-icon>{{ forecast.trend === 'up' ? 'trending_up' : forecast.trend === 'down' ? 'trending_down' : 'trending_flat' }}</mat-icon>
+                {{ forecast.trend === 'up' ? '+' : '' }}{{ ((forecast.forecast - (revenueTrends[revenueTrends.length-1]?.revenue || 0)) / (revenueTrends[revenueTrends.length-1]?.revenue || 1) * 100).toFixed(1) }}%
+              </span>
+            </div>
+            <div class="confidence">Confidence: {{ forecast.confidence }}%</div>
+            <div class="note">Based on linear regression of last {{ revenueTrends.length }} months</div>
+          </div>
+        </div>
+
+        <!-- Top Performing Clients Table -->
+        <div class="clients-card">
+          <div class="clients-header">
+            <div>
+              <h3>Top Performing Clients</h3>
+              <p>Tier 1 accounts by annual recurring revenue</p>
+            </div>
+            <div class="header-actions">
+              <button class="export-btn" (click)="exportToExcel()">
+                <mat-icon>file_download</mat-icon> Export Excel
+              </button>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table class="clients-table">
+              <thead>
+                <tr>
+                  <th (click)="setSort('clientName')">Client Name <mat-icon>sort</mat-icon></th>
+                  <th (click)="setSort('marketShare')">Market Share <mat-icon>sort</mat-icon></th>
+                  <th (click)="setSort('revenue')">Monthly Revenue <mat-icon>sort</mat-icon></th>
+                  <th (click)="setSort('growth')">YoY Growth <mat-icon>sort</mat-icon></th>
+                  <th (click)="setSort('status')">Account Status <mat-icon>sort</mat-icon></th>
+                  <th class="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (client of paginatedClients; track client.clientId) {
+                  <tr class="clickable-row" (click)="viewClientInvoices(client.clientId)">
+                    <td>
+                      <div class="client-info">
+                        <div class="avatar" [class]="client.clientInitials.toLowerCase()">{{ client.clientInitials }}</div>
+                        <div class="details">
+                          <div class="name">{{ client.clientName }}</div>
+                          <div class="meta">{{ client.invoiceCount }} invoices</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="market-share">
+                        <div class="bar-bg"><div class="bar-fill" [style.width.%]="client.marketShare"></div></div>
+                        <span class="percent">{{ client.marketShare.toFixed(1) }}%</span>
+                      </div>
+                    </td>
+                    <td class="revenue-cell">{{ client.revenue | appCurrency }}</td>
+                    <td><span class="badge" [class.positive]="client.growth > 0" [class.negative]="client.growth < 0">{{ client.growth > 0 ? '+' : '' }}{{ client.growth.toFixed(1) }}%</span></td>
+                    <td>
+                      <div class="status">
+                        <span class="status-dot" [class.active]="client.status === 'active'" [class.onhold]="client.status === 'onHold'"></span>
+                        {{ client.status === 'active' ? 'Active' : 'On Hold' }}
+                      </div>
+                    </td>
+                    <td class="text-right"><button class="action-btn" (click)="$event.stopPropagation()" aria-label="More options"><mat-icon>more_vert</mat-icon></button></td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <div class="showing-info">
+              Showing {{ startIndex + 1 }} to {{ endIndex }} of {{ clientRevenues.length }} clients
+              <select class="page-size-select" (change)="onPageSizeChange($event)" aria-label="Items per page">
+                @for (size of pageSizeOptions; track size) {
+                  <option [value]="size" [selected]="size === itemsPerPage">{{ size }} per page</option>
+                }
+              </select>
+            </div>
+            <div class="pagination-controls">
+              <button class="page-btn" [disabled]="currentPage === 1" (click)="previousPage()"><mat-icon>chevron_left</mat-icon></button>
+              @for (page of [].constructor(totalPages); track $index) {
+                <button class="page-number" [class.active]="($index+1) === currentPage" (click)="goToPage($index+1)">{{ $index+1 }}</button>
+              }
+              <button class="page-btn" [disabled]="currentPage === totalPages" (click)="nextPage()"><mat-icon>chevron_right</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Revenue Streams Tab -->
+      @if (selectedTab === 'revenue') {
+        <div class="real-chart-tab">
+          <div class="chart-title">
+            <mat-icon>stacked_bar_chart</mat-icon>
+            <h3>Revenue by Product / Service</h3>
+          </div>
+          <div class="horizontal-bars">
+            @for (item of productRevenues; track item.name) {
+              <div class="bar-item">
+                <div class="bar-label">{{ item.name }}</div>
+                <div class="bar-bg-horizontal">
+                  <div class="bar-fill-horizontal" [style.width.%]="(item.revenue / (productRevenues[0]?.revenue || 1)) * 100">
+                    <span class="bar-value">{{ item.revenue | appCurrency }}</span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Billing Cycles Tab -->
+      @if (selectedTab === 'billing') {
+        <div class="real-chart-tab">
+          <div class="chart-title">
+            <mat-icon>pie_chart</mat-icon>
+            <h3>Billing Cycles Distribution</h3>
+          </div>
+          <div class="donut-container">
+            <div class="donut-chart">
+              <canvas #billingChart width="200" height="200"
+                      aria-label="Billing cycles distribution pie chart showing monthly, quarterly, and annual percentages"
+                      role="img"
+                      title="Billing cycles distribution"></canvas>
+            </div>
+            <div class="donut-legend">
+              @for (cycle of billingCycles; track cycle.cycle) {
+                <div class="legend-item">
+                  <div class="color-box" [style.background]="cycle.cycle === 'Monthly' ? 'var(--primary)' : cycle.cycle === 'Quarterly' ? 'var(--accent-gold)' : '#0b7a62'"></div>
+                  <span>{{ cycle.cycle }} ({{ cycle.percentage }}%)</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Client Retention Tab -->
+      @if (selectedTab === 'retention') {
+        <div class="real-chart-tab">
+          <div class="chart-title">
+            <mat-icon>group_add</mat-icon>
+            <h3>Client Retention Metrics</h3>
+          </div>
+          <div class="kpi-row">
+            <div class="mini-kpi"><span>Retention Rate</span><strong>{{ retentionMetrics.retentionRate }}%</strong></div>
+            <div class="mini-kpi"><span>Churn Rate</span><strong>{{ retentionMetrics.churnRate }}%</strong></div>
+            <div class="mini-kpi"><span>Avg. LTV</span><strong>{{ retentionMetrics.avgLTV | appCurrency }}</strong></div>
+          </div>
+        </div>
+      }
+
+      <!-- Forecasts Tab -->
+      @if (selectedTab === 'forecast') {
+        <div class="real-chart-tab">
+          <div class="chart-title">
+            <mat-icon>trending_up</mat-icon>
+            <h3>Revenue Forecasts</h3>
+          </div>
+          <div class="forecast-grid">
+            <div>Q1 2025: {{ (revenueTrends.slice(-3).reduce((s, t) => s + t.revenue, 0) / 3 * 1.05) | appCurrency }}</div>
+            <div>Q2 2025: {{ (revenueTrends.slice(-3).reduce((s, t) => s + t.revenue, 0) / 3 * 1.12) | appCurrency }}</div>
+            <div>Q3 2025: {{ (revenueTrends.slice(-3).reduce((s, t) => s + t.revenue, 0) / 3 * 1.21) | appCurrency }}</div>
+            <div>Q4 2025: {{ (revenueTrends.slice(-3).reduce((s, t) => s + t.revenue, 0) / 3 * 1.35) | appCurrency }}</div>
+          </div>
+        </div>
+      }
+    </div>
+  </main>
+
+  <app-bottom-nav></app-bottom-nav>
+</div>

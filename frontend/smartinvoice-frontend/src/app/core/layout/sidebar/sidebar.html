@@ -1,0 +1,44 @@
+<aside class="sidebar" [class.open]="isOpen">
+  <div class="sidebar-header" (click)="goToDashboard()">
+    <div class="logo-icon">
+      <mat-icon>receipt_long</mat-icon>
+    </div>
+    <h2 class="logo-text">SmartInvoice</h2>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-item" routerLink="/dashboard" routerLinkActive="active" (click)="closeSidebar()">
+      <mat-icon>dashboard</mat-icon>
+      <span>{{ 'SIDEBAR.DASHBOARD' | translate }}</span>
+    </a>
+    <a class="nav-item" routerLink="/invoices" routerLinkActive="active" (click)="closeSidebar()">
+      <mat-icon>receipt_long</mat-icon>
+      <span>{{ 'SIDEBAR.INVOICES' | translate }}</span>
+      @if (pendingInvoicesCount > 0) {
+        <span class="badge-pending">{{ pendingInvoicesCount }}</span>
+      }
+    </a>
+    <a class="nav-item" routerLink="/products" routerLinkActive="active" (click)="closeSidebar()">
+      <mat-icon>inventory_2</mat-icon>
+      <span>{{ 'SIDEBAR.PRODUCTS' | translate }}</span>
+    </a>
+
+    <a class="nav-item" routerLink="/clients" routerLinkActive="active" (click)="closeSidebar()">
+      <mat-icon>group</mat-icon>
+      <span>{{ 'SIDEBAR.CLIENTS' | translate }}</span>
+    </a>
+    <a class="nav-item" routerLink="/analytics" routerLinkActive="active" (click)="closeSidebar()">
+      <mat-icon>analytics</mat-icon>
+      <span>{{ 'SIDEBAR.REPORTS' | translate }}</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <ng-content select="[sidebar-footer]"></ng-content>
+    <a class="nav-item" routerLink="/settings" routerLinkActive="active" (click)="closeSidebar()">
+      <mat-icon>settings</mat-icon>
+      <span>{{ 'SIDEBAR.SETTINGS' | translate }}</span>
+    </a>
+  </div>
+</aside>
+@if (isOpen) {
+  <div class="sidebar-backdrop" (click)="closeSidebar()"></div>
+}
